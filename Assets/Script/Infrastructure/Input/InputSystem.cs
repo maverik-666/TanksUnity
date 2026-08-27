@@ -9,51 +9,44 @@ namespace Project
         private InputActionReference _positionActionReference;
         
         [SerializeField] 
-        private InputActionReference _axisActionReference;
+        private InputActionReference _moveActionReference;
         
         [SerializeField]
-        private InputActionReference _leftClickActionReference;
+        private InputActionReference _shootActionReference;
         
-        [SerializeField]
-        private InputActionReference _rightClickActionReference;
-        
-        private Vector2 _mousePosition = Vector2.zero;
-        private Vector2 _inputAxis = Vector2.zero;
+        private Vector2 _mouseScreenPosition = Vector2.zero;
+        private Vector2 _moveInput = Vector2.zero;
 
-        private ClickListener _leftClickListener = null;
-        private ClickListener _rightClickListener = null;
+        private ClickListener _shootListener = null;
         
         
-        public Vector2 InputAxis => _inputAxis;
-        public Vector2 MousePosition => _mousePosition;
+        public Vector2 MoveInput => _moveInput;
+        public Vector2 MouseScreenPosition => _mouseScreenPosition;
 
-        public ClickListener LeftClickListener => _leftClickListener;
+        public ClickListener ShootListener => _shootListener;
 
-        public ClickListener RightClickListener => _rightClickListener;
 
         public void Init()
         {
             _positionActionReference.action.Enable();
-            _axisActionReference.action.Enable();
+            _moveActionReference.action.Enable();
             
-            _leftClickListener = new ClickListener(_leftClickActionReference);
-            _rightClickListener = new ClickListener(_rightClickActionReference);
+            _shootListener = new ClickListener(_shootActionReference);
         }
 
-        private void Update()
+        public void UpdateTick(float deltaTime)
         {
-            _mousePosition = _positionActionReference.action.ReadValue<Vector2>();
-            _inputAxis = _axisActionReference.action.ReadValue<Vector2>();
+            _mouseScreenPosition = _positionActionReference.action.ReadValue<Vector2>();
+            _moveInput = _moveActionReference.action.ReadValue<Vector2>();
         }
 
     
         private void OnDestroy()
         {
             _positionActionReference.action.Disable();
-            _axisActionReference.action.Disable();
+            _moveActionReference.action.Disable();
             
-            _leftClickListener.Dispose();
-            _rightClickListener.Dispose();
+            _shootListener.Dispose();
         }
     }
 }

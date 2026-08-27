@@ -5,6 +5,27 @@ namespace Project
 
     public static class Extensions
     {
+        public static T Resolve<T>(this MonoBehaviour monoBeh)
+        {
+            return monoBeh.GetComponentInParent<Context>().Resolve<T>();
+        }
+
+        public static T GetParentRecursive<T>(this MonoBehaviour monoBeh)
+        {
+            Transform parent = monoBeh.transform.parent;
+            while (parent != null)
+            {
+                if (parent.TryGetComponent(out T c))
+                {
+                    return c;
+                }
+
+                parent = parent.parent;
+            }
+
+            return default;
+        }
+        
         public static float RoundToStep(this float value, float step)
         {
             return Mathf.Round(value / step) * step;
@@ -26,6 +47,17 @@ namespace Project
                 int r = Random.Range(i, count);
                 (ts[i], ts[r]) = (ts[r], ts[i]);
             }
+        }
+        
+        public static Vector2 Rotate(this Vector2 v, float degrees) 
+        {
+            float sin = Mathf.Sin(degrees * Mathf.Deg2Rad);
+            float cos = Mathf.Cos(degrees * Mathf.Deg2Rad);
+        
+            float tx = v.x;
+            float ty = v.y;
+        
+            return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
         }
     }
 }
