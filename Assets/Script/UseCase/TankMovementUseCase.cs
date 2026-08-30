@@ -4,7 +4,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class HullMovementUseCase : MonoBehaviour
+    public class TankMovementUseCase : MonoBehaviour
     {
     
         private bool _isInitialized = false;
@@ -14,7 +14,7 @@ namespace Project
             _isInitialized = true;
         }
 
-        public void Execute(Hull hull, Vector2 input, float deltaTime)
+        public void Execute(Tank tank, Vector2 input, float deltaTime)
         {
             if(input.y == 0)
                 return;
@@ -22,8 +22,8 @@ namespace Project
             if (input.y > 0)
                 input.x *= -1;
             
-            UpdateLinearVelocityOf(hull.Rigidbody2D, hull.HullStats.MovementSpeed, input.y, deltaTime);
-            UpdateAngularVelocityOf(hull.Rigidbody2D, hull.HullStats.Agility, input.x, deltaTime);
+            UpdateLinearVelocityOf(tank.Rigidbody2D, tank.TankStats.MovementSpeed, input.y, deltaTime);
+            UpdateAngularVelocityOf(tank.Rigidbody2D, tank.TankStats.Agility, input.x, deltaTime);
         }
         
         private void UpdateLinearVelocityOf(Rigidbody2D tankBody, float speed, float direction, float deltaTime)
@@ -43,7 +43,7 @@ namespace Project
         {
             if (!_isInitialized)
             {
-                Debug.LogError($"{nameof(HullMovementUseCase)} not initialized", this);
+                Debug.LogError($"{nameof(TankMovementUseCase)} not initialized", this);
             }
         }
 #endif

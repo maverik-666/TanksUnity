@@ -23,7 +23,7 @@ namespace Project
 
         public void Resolve(Projectile projectile, Collider2D other)
         {
-            if (other.transform == projectile.Owner.Hull.transform)
+            if (other.transform == projectile.Owner.transform)
             {
                 return;
             }

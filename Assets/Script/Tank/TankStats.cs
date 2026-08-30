@@ -6,7 +6,11 @@ namespace Project
     [Serializable]
     public struct TankStats
     {
-        public HullStats HullStats;
         public TurretStats TurretStats;
+        
+        public float MovementSpeed;
+        public float Agility;
+        
+        public float Health;
     }
 }

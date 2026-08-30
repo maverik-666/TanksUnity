@@ -60,8 +60,8 @@ namespace Project
         
         private void Recolor(Color color, float duration)
         {
-            _flashTween?.Kill();
-            _flashTween = DOVirtual.Color(_tankRenderers[0].color, color, duration, SetColor)
+            _recolorTween?.Kill();
+            _recolorTween = DOVirtual.Color(_tankRenderers[0].color, color, duration, SetColor)
                 .SetLink(gameObject, LinkBehaviour.KillOnDisable);
             
             void SetColor(Color phase)

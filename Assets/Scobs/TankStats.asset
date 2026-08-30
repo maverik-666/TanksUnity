@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: TankStats
   m_EditorClassIdentifier: Assembly-CSharp::Project.TankStatsSO
   _tankStats:
-    HullStats:
-      MovementSpeed: 25
-      Agility: 300
-      Health: 200
     TurretStats:
       RotationSpeed: 100
       ShootCooldown: 0.7
+    MovementSpeed: 25
+    Agility: 300
+    Health: 200

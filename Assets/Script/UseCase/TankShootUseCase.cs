@@ -21,12 +21,11 @@ namespace Project
         public void Execute(Tank tank)
         {
             var turret = tank.Turret;
-            var hull = tank.Hull;
             
             if(turret.CooldownTimer.IsRunning)
                 return;
             
-            hull.ApplyRecoil(turret.Rotation * Vector3.right * -_recoil);
+            tank.ApplyRecoil(turret.Rotation * Vector3.right * -_recoil);
             turret.CooldownTimer.Setup(turret.TurretStats.ShootCooldown);
             turret.AnimateShoot();
             ShootProjectileBy(tank);

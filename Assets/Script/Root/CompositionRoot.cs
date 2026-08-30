@@ -42,7 +42,7 @@ namespace Project
             projectileCollisionUseCase.Init(projectileFactory, vfxFactory);
             
             GetComponentInChildren<TurretAimUseCase>(true).Init();
-            GetComponentInChildren<HullMovementUseCase>(true).Init();
+            GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init();
             
             foreach (var tank in GetComponentsInChildren<Tank>(true))

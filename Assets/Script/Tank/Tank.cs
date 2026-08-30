@@ -3,40 +3,50 @@ namespace Project
     using UnityEngine;
 
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(Transform))]
+    [RequireComponent(typeof(Rigidbody2D))]
     public class Tank : MonoBehaviour
     {
-        
         private TankStats _tankStats;
         
-        private Turret _turret = null;
-        private Hull _hull = null;
-
         private TankShootUseCase _tankShootUseCase = null;
+        private TankMovementUseCase _tankMovementUseCase = null;
+        
+        private TankSkinRenderer _tankSkinRenderer = null;
+        private Turret _turret = null;
+        private Rigidbody2D _rigidbody2D = null;
         
         private bool _isInitialized = false;
 
-        public Hull Hull => _hull;
+        public Rigidbody2D Rigidbody2D => _rigidbody2D;
+        public TankStats TankStats => _tankStats;
         public Turret Turret => _turret;
 
         public void Init(TankStats tankStats)
         {
             _tankStats = tankStats;
             
-            _turret = GetComponentInChildren<Turret>(true);
-            _hull = GetComponentInChildren<Hull>(true);
-
             _tankShootUseCase = this.Resolve<TankShootUseCase>();
+            _tankMovementUseCase = this.Resolve<TankMovementUseCase>();
             
+            _tankSkinRenderer = GetComponentInChildren<TankSkinRenderer>(true);
+            _turret = GetComponentInChildren<Turret>(true);
+            
+            _rigidbody2D = GetComponent<Rigidbody2D>();
+
+            _tankSkinRenderer.Init(this);
             _turret.Init(_tankStats.TurretStats);
-            _hull.Init(_tankStats.HullStats);
             
             _isInitialized = true;
         }
         
         public void Move(Vector2 input, float deltaTime)
         {
-            _hull.Move(input, deltaTime);
+            _tankMovementUseCase.Execute(this, input, deltaTime);
+        }
+        
+        public void ApplyRecoil(Vector2 force)
+        {
+            _rigidbody2D.AddForce(force, ForceMode2D.Impulse);
         }
         
         public void Rotate(Vector2 aimTarget, float deltaTime)
