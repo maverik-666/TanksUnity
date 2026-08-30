@@ -1,0 +1,17 @@
+shards.png
+	size: 49, 16
+	repeat: none
+1
+	bounds: 0, 0, 6, 4
+2
+	bounds: 7, 0, 5, 4
+3
+	bounds: 14, 0, 6, 4
+4
+	bounds: 21, 0, 7, 4
+5
+	bounds: 28, 0, 5, 4
+6
+	bounds: 35, 0, 7, 3
+7
+	bounds: 42, 0, 7, 3

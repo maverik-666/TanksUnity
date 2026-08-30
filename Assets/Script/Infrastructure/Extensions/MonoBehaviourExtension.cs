@@ -59,5 +59,10 @@ namespace Project
         
             return new Vector2(cos * tx - sin * ty, sin * tx + cos * ty);
         }
+
+        public static float CalcRotation(this Vector2 v)
+        {
+            return Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg;
+        }
     }
 }

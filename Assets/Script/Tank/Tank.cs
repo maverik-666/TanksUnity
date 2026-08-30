@@ -6,6 +6,7 @@ namespace Project
     [RequireComponent(typeof(Transform))]
     public class Tank : MonoBehaviour
     {
+        
         private TankStats _tankStats;
         
         private Turret _turret = null;
@@ -14,7 +15,10 @@ namespace Project
         private TankShootUseCase _tankShootUseCase = null;
         
         private bool _isInitialized = false;
-        
+
+        public Hull Hull => _hull;
+        public Turret Turret => _turret;
+
         public void Init(TankStats tankStats)
         {
             _tankStats = tankStats;
@@ -42,7 +46,7 @@ namespace Project
         
         public void Shoot()
         {
-            _tankShootUseCase.Execute(_hull, _turret);
+            _tankShootUseCase.Execute(this);
         }
         
 #if UNITY_EDITOR

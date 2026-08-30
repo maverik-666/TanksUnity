@@ -16,7 +16,7 @@ namespace Project
         public void Execute(Turret turret, Vector2 aimTarget, float deltaTime)
         {
             var direction = aimTarget - turret.Position;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            float angle = direction.CalcRotation();
     
             var aimRotation = Quaternion.Euler(0, 0, angle);
 

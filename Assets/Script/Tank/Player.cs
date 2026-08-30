@@ -6,10 +6,10 @@ namespace Project
     [RequireComponent(typeof(Tank))]
     public class Player : MonoBehaviour
     {
-        public Tank Tank => _tank;
-        
-        private Tank _tank;
+        private Tank _tank = null;
         private bool _isInitialized = false;
+        
+        public Tank Tank => _tank;
         
         public void Init()
         {

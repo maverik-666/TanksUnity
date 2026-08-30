@@ -6,15 +6,15 @@ namespace Project
     [RequireComponent(typeof(Rigidbody2D))]
     public class Hull : MonoBehaviour
     {
-        public HullStats HullStats => _hullStats;
-        public Rigidbody2D Rigidbody2D => _rigidbody2D;
-        
         private HullStats _hullStats;
         
         private Rigidbody2D _rigidbody2D = null;
         private HullMovementUseCase _hullMovementUseCase = null;
         
         private bool _isInitialized = false;
+        
+        public HullStats HullStats => _hullStats;
+        public Rigidbody2D Rigidbody2D => _rigidbody2D;
         
         public void Init(HullStats hullStats)
         {

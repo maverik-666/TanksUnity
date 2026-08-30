@@ -6,15 +6,9 @@ namespace Project
     [RequireComponent(typeof(Transform))]
     public class Turret : MonoBehaviour
     {
-        public Vector2 Position => transform.position;
-        public Quaternion Rotation => transform.rotation;
+        [SerializeField]
+        private Transform _projectilePoint;
         
-        public TurretStats TurretStats => _turretStats; 
-        
-        public Timer CooldownTimer => _cooldownTimer;
-        
-        public bool CanShoot => CooldownTimer.IsFinished;
-
         private TurretStats _turretStats;
         private TurretAimUseCase _turretAimUseCase = null;
         
@@ -23,6 +17,17 @@ namespace Project
         private Timer _cooldownTimer = null;
         
         private bool _isInitialized = false;
+     
+        public Vector2 Position => transform.position;
+        public Quaternion Rotation => transform.rotation;
+
+        public Vector3 ProjectilePosition => _projectilePoint.position;
+
+        public TurretStats TurretStats => _turretStats; 
+        
+        public Timer CooldownTimer => _cooldownTimer;
+        
+        public bool CanShoot => CooldownTimer.IsFinished;
         
         public void Init(TurretStats turretStats)
         {
