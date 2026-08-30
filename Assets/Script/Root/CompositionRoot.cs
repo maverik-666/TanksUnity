@@ -34,8 +34,10 @@ namespace Project
             var projectileRegistry = new Registry<Projectile>(50);
             _projectileUpdateHandler = GetComponentInChildren<ProjectileUpdateHandler>(true);
             var projectileFactory = GetComponentInChildren<ProjectileFactory>(true);
-            var projectileCollisionUseCase = GetComponentInChildren<ProjectileCollisionUseCase>(true);
-
+            var projectileCollisionUseCase = GetComponentInChildren<ProjectileInteractUseCase>(true);
+            
+            var damageUseCase = GetComponentInChildren<DamageUseCase>(true);
+            damageUseCase.Init();
             
             _projectileUpdateHandler.Init(projectileRegistry);
             projectileFactory.Init(projectileRegistry);
@@ -48,6 +50,11 @@ namespace Project
             foreach (var tank in GetComponentsInChildren<Tank>(true))
             {
                 tank.Init(_tankStats.TankStats);
+            }
+            
+            foreach (var destructible in GetComponentsInChildren<Destructible>(true))
+            {
+                destructible.Init();
             }
         }
 

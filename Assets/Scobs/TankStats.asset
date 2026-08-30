@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.TankStatsSO
   _tankStats:
     TurretStats:
-      RotationSpeed: 100
+      RotationSpeed: 200
       ShootCooldown: 0.7
     MovementSpeed: 25
     Agility: 300
