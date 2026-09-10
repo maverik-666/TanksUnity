@@ -53,11 +53,19 @@ namespace Project
             GetComponentInChildren<TurretAimUseCase>(true).Init();
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init();
+
+            var boxFactory = GetComponentInChildren<BoxFactory>(true);
+            var gasolineFactory = GetComponentInChildren<GasolineFactory>(true);
+            var bushFactory = GetComponentInChildren<BushFactory>(true);
             
-            foreach (var destructible in GetComponentsInChildren<Destructible>(true))
-            {
-                destructible.Init();
-            }
+            boxFactory.Init();
+            gasolineFactory.Init();
+            bushFactory.Init();
+            
+            var mapGenerator = GetComponentInChildren<MapGenerator>(true);
+            
+            mapGenerator.Init(boxFactory, gasolineFactory, bushFactory);
+            mapGenerator.Generate(0);
         }
 
         public void Update()
