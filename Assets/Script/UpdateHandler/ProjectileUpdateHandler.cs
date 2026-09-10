@@ -4,7 +4,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class ProjectileUpdateHandler : MonoBehaviour
+    public class ProjectileUpdateHandler : MonoBehaviour, IUpdateHandler
     {
         private Registry<Projectile> _projectiles = null;
         private bool _isInitialized = false;

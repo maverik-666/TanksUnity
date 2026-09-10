@@ -4,18 +4,18 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class OwnerPlayerInputHandler : MonoBehaviour
+    public class OwnerPlayerInputHandler : MonoBehaviour, IUpdateHandler
     {
         private Camera _camera = null;
         private InputSystem _inputSystem = null;
-        private Registry<Player> _owners = null;
+        private Registry<Player> _playerRegistry = null;
         private bool _isInitialized = false;
         
-        public void Init(InputSystem inputSystem, Camera camera, Registry<Player> owners)
+        public void Init(InputSystem inputSystem, Camera camera, Registry<Player> playerRegistry)
         {
             _inputSystem = inputSystem;
             _camera = camera;
-            _owners = owners;
+            _playerRegistry = playerRegistry;
             _inputSystem.ShootListener.Pressed += Shoot;
             
             _isInitialized = true;
@@ -23,7 +23,7 @@ namespace Project
 
         public void UpdateTick(float deltaTime)
         {
-            if (_owners.Count == 0)
+            if (_playerRegistry.Count == 0)
             {
                 return;
             }
@@ -34,7 +34,7 @@ namespace Project
 
         private void Move(float deltaTime)
         {
-            foreach (var player in _owners.Items)
+            foreach (var player in _playerRegistry.Items)
             { 
                 player.Move(_inputSystem.MoveInput, deltaTime);
             }
@@ -44,7 +44,7 @@ namespace Project
         {
             var mousePosition = _camera.ScreenToWorldPoint(_inputSystem.MouseScreenPosition);
             
-            foreach (var player in _owners.Items)
+            foreach (var player in _playerRegistry.Items)
             { 
                 player.Rotate(mousePosition, deltaTime);
             }
@@ -52,7 +52,7 @@ namespace Project
 
         private void Shoot()
         {
-            foreach (var player in _owners.Items)
+            foreach (var player in _playerRegistry.Items)
             { 
                 player.Shoot();
             }

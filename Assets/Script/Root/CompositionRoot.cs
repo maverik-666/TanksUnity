@@ -8,45 +8,42 @@ namespace Project
         
         private InputSystem _inputSystem = null;
 
-        private OwnerPlayerInputHandler _ownerPlayerInputHandler = null;
-        private TimerUpdateHandler _timerUpdateHandler = null;
-        private ProjectileUpdateHandler _projectileUpdateHandler = null;
-        
-
         public static CompositionRoot Instance => _instance;
         
         public void Awake()
         {
             _instance = this;
+
+            var updateHandlerRegistry = new Registry<IUpdateHandler>(20);
+            updateHandlerRegistry.AddRange(GetComponentsInChildren<IUpdateHandler>(true));
+            Bind(updateHandlerRegistry);
             
-            var ownerPlayer = new OwnerPlayerRegistry();
-            Bind(ownerPlayer);
+            var ownerPlayerRegistry = new OwnerPlayerRegistry();
+            Bind(ownerPlayerRegistry);
             
             var camera = GetComponentInChildren<Camera>(true);
+            GetComponentInChildren<CameraFollowHandler>(true).Init(camera, ownerPlayerRegistry);
 
-            var tankFactory = GetComponentInChildren<TankFactory>(true);
-            tankFactory.Init();
+            GetComponentInChildren<TankFactory>(true).Init();
             
             _inputSystem = GetComponentInChildren<InputSystem>(true);
-            _ownerPlayerInputHandler = GetComponentInChildren<OwnerPlayerInputHandler>(true);
-            _timerUpdateHandler = GetComponentInChildren<TimerUpdateHandler>(true);
-            
             _inputSystem.Init(); 
-            _ownerPlayerInputHandler.Init(_inputSystem, camera, ownerPlayer);
-            _timerUpdateHandler.Init();
+            
+            GetComponentInChildren<OwnerPlayerInputHandler>(true).Init(_inputSystem, camera, ownerPlayerRegistry); 
+            GetComponentInChildren<TimerUpdateHandler>(true).Init();
+            
+            GetComponentInChildren<DamageUseCase>(true).Init();
             
             var vfxFactory = GetComponentInChildren<OneShotVFXFactory>(true);
             vfxFactory.Init();
             
             var projectileRegistry = new Registry<Projectile>(50);
-            _projectileUpdateHandler = GetComponentInChildren<ProjectileUpdateHandler>(true);
+            
+            GetComponentInChildren<ProjectileUpdateHandler>(true).Init(projectileRegistry);
+
             var projectileFactory = GetComponentInChildren<ProjectileFactory>(true);
             var projectileCollisionUseCase = GetComponentInChildren<ProjectileInteractUseCase>(true);
             
-            var damageUseCase = GetComponentInChildren<DamageUseCase>(true);
-            damageUseCase.Init();
-            
-            _projectileUpdateHandler.Init(projectileRegistry);
             projectileFactory.Init(projectileRegistry);
             projectileCollisionUseCase.Init(projectileFactory, vfxFactory);
             
@@ -54,6 +51,8 @@ namespace Project
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init();
 
+            var mapGenerator = GetComponentInChildren<MapGenerator>(true);
+            
             var boxFactory = GetComponentInChildren<BoxFactory>(true);
             var gasolineFactory = GetComponentInChildren<GasolineFactory>(true);
             var bushFactory = GetComponentInChildren<BushFactory>(true);
@@ -62,20 +61,10 @@ namespace Project
             gasolineFactory.Init();
             bushFactory.Init();
             
-            var mapGenerator = GetComponentInChildren<MapGenerator>(true);
-            
             mapGenerator.Init(boxFactory, gasolineFactory, bushFactory);
             mapGenerator.Generate(0);
-        }
-
-        public void Update()
-        {
-            float deltaTime = Time.deltaTime;
             
-            _inputSystem.UpdateTick(deltaTime);
-            _ownerPlayerInputHandler.UpdateTick(deltaTime);
-            _timerUpdateHandler.UpdateTick(deltaTime);
-            _projectileUpdateHandler.UpdateTick(deltaTime);
+            GetComponentInChildren<GameUpdater>(true).Init();
         }
     }
 }

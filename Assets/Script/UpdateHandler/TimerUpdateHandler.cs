@@ -5,7 +5,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class TimerUpdateHandler : MonoBehaviour
+    public class TimerUpdateHandler : MonoBehaviour, IUpdateHandler
     {
         private List<Timer> _timers = new List<Timer>();
         private bool _isInitialized = false;
