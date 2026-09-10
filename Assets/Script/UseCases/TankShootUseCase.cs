@@ -18,11 +18,11 @@ namespace Project
             _isInitialized = true;
         }
 
-        public void Execute(Tank tank)
+        public void Execute(Tank tank, bool isInstant)
         {
             var turret = tank.Turret;
             
-            if(turret.CooldownTimer.IsRunning)
+            if(turret.CooldownTimer.IsRunning && !isInstant)
                 return;
             
             tank.ApplyRecoil(turret.Rotation * Vector3.right * -_recoil);

@@ -31,9 +31,14 @@ namespace Project
 
         public Rigidbody2D Rigidbody2D => _rigidbody2D;
         public Vector2 Position => transform.position;
+        public Quaternion Rotation => transform.rotation;
+        
         public TankStats TankStats => _tankStats;
         public Turret Turret => _turret;
 
+        public bool CanShoot => Turret.CanShoot;
+        
+        
         public Health Health => _health;
 
         public bool CanNotTakeDamage => _invincibilityTimer.IsRunning;
@@ -81,9 +86,9 @@ namespace Project
             _turret.Rotate(aimTarget, deltaTime);
         }
         
-        public void Shoot()
+        public void Shoot(bool isInstant)
         {
-            _tankShootUseCase.Execute(this);
+            _tankShootUseCase.Execute(this, isInstant);
         }
         
         public void Interact(Projectile projectile)

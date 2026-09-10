@@ -101,7 +101,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8608116322416608408}
   - component: {fileID: 4416262996066086766}
-  - component: {fileID: 3308440876459734739}
   - component: {fileID: 3586192203999423558}
   - component: {fileID: 9054817594212645096}
   m_Layer: 0
@@ -119,7 +118,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2381380056760322084}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -145,18 +144,6 @@ MonoBehaviour:
   _health:
     _current: 0
     _max: 0
---- !u!114 &3308440876459734739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2381380056760322084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed00d46db3b2d43498d76fcccab19d57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.Player
 --- !u!50 &3586192203999423558
 Rigidbody2D:
   serializedVersion: 5
@@ -276,6 +263,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.TankSkinRenderer
   _sharedMaterial: {fileID: 2100000, guid: e2c942a136eca5142b8906c4a9ec0033, type: 2}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
+  _dimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &4542710929007657143
 GameObject:
   m_ObjectHideFlags: 0

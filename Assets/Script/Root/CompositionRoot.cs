@@ -4,28 +4,35 @@ namespace Project
     
     public class CompositionRoot : Context
     {
-        [SerializeField]
-        private TankStatsSO _tankStats;
+        private static CompositionRoot _instance = null;
         
         private InputSystem _inputSystem = null;
 
-        private PlayerInputHandler _playerInputHandler = null;
+        private OwnerPlayerInputHandler _ownerPlayerInputHandler = null;
         private TimerUpdateHandler _timerUpdateHandler = null;
         private ProjectileUpdateHandler _projectileUpdateHandler = null;
         
+
+        public static CompositionRoot Instance => _instance;
+        
         public void Awake()
         {
+            _instance = this;
+            
+            var ownerPlayer = new OwnerPlayerRegistry();
+            Bind(ownerPlayer);
+            
             var camera = GetComponentInChildren<Camera>(true);
 
-            var player = GetComponentInChildren<Player>(true);
-            player.Init();
+            var tankFactory = GetComponentInChildren<TankFactory>(true);
+            tankFactory.Init();
             
             _inputSystem = GetComponentInChildren<InputSystem>(true);
-            _playerInputHandler = GetComponentInChildren<PlayerInputHandler>(true);
+            _ownerPlayerInputHandler = GetComponentInChildren<OwnerPlayerInputHandler>(true);
             _timerUpdateHandler = GetComponentInChildren<TimerUpdateHandler>(true);
-
-            _inputSystem.Init();
-            _playerInputHandler.Init(_inputSystem, camera, player);
+            
+            _inputSystem.Init(); 
+            _ownerPlayerInputHandler.Init(_inputSystem, camera, ownerPlayer);
             _timerUpdateHandler.Init();
             
             var vfxFactory = GetComponentInChildren<OneShotVFXFactory>(true);
@@ -47,11 +54,6 @@ namespace Project
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init();
             
-            foreach (var tank in GetComponentsInChildren<Tank>(true))
-            {
-                tank.Init(_tankStats.TankStats);
-            }
-            
             foreach (var destructible in GetComponentsInChildren<Destructible>(true))
             {
                 destructible.Init();
@@ -63,7 +65,7 @@ namespace Project
             float deltaTime = Time.deltaTime;
             
             _inputSystem.UpdateTick(deltaTime);
-            _playerInputHandler.UpdateTick(deltaTime);
+            _ownerPlayerInputHandler.UpdateTick(deltaTime);
             _timerUpdateHandler.UpdateTick(deltaTime);
             _projectileUpdateHandler.UpdateTick(deltaTime);
         }
