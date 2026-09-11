@@ -21,9 +21,9 @@ namespace Project
             _isInitialized = true;
         }
         
-        public void CreateOn(int x, int y)
+        public void CreateOn(Vector2 pos)
         {
-            var bush = Instantiate(_bushPf, new Vector3(x,y,0), Quaternion.identity, transform);
+            var bush = Instantiate(_bushPf, pos, Quaternion.Euler(0,0, 90 * Random.Range(0, 4)), transform);
             bush.Init();
         }
         

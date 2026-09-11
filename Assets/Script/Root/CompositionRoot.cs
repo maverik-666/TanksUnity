@@ -15,22 +15,32 @@ namespace Project
             _instance = this;
 
             var updateHandlerRegistry = new Registry<IUpdateHandler>(20);
-            updateHandlerRegistry.AddRange(GetComponentsInChildren<IUpdateHandler>(true));
             Bind(updateHandlerRegistry);
             
             var ownerPlayerRegistry = new OwnerPlayerRegistry();
             Bind(ownerPlayerRegistry);
             
             var camera = GetComponentInChildren<Camera>(true);
-            GetComponentInChildren<CameraFollowHandler>(true).Init(camera, ownerPlayerRegistry);
+            var cameraFollowHandler = GetComponentInChildren<CameraFollowHandler>(true);
+            cameraFollowHandler.Init(camera, ownerPlayerRegistry);
+            updateHandlerRegistry.Add(cameraFollowHandler);
 
+            var cameraBoundsUpdateHandler = GetComponentInChildren<CameraBoundsUpdateHandler>(true);
+            cameraBoundsUpdateHandler.Init(camera);
+            updateHandlerRegistry.Add(cameraBoundsUpdateHandler);
+            
             GetComponentInChildren<TankFactory>(true).Init();
             
             _inputSystem = GetComponentInChildren<InputSystem>(true);
-            _inputSystem.Init(); 
+            _inputSystem.Init();
+
+            var ownerPlayerInputHandler = GetComponentInChildren<OwnerPlayerInputHandler>(true);
+            ownerPlayerInputHandler.Init(_inputSystem, camera, ownerPlayerRegistry);
+            updateHandlerRegistry.Add(ownerPlayerInputHandler);
             
-            GetComponentInChildren<OwnerPlayerInputHandler>(true).Init(_inputSystem, camera, ownerPlayerRegistry); 
-            GetComponentInChildren<TimerUpdateHandler>(true).Init();
+            var timerUpdateHandler = GetComponentInChildren<TimerUpdateHandler>(true);
+            timerUpdateHandler.Init();
+            updateHandlerRegistry.Add(timerUpdateHandler);
             
             GetComponentInChildren<DamageUseCase>(true).Init();
             
@@ -38,9 +48,11 @@ namespace Project
             vfxFactory.Init();
             
             var projectileRegistry = new Registry<Projectile>(50);
-            
-            GetComponentInChildren<ProjectileUpdateHandler>(true).Init(projectileRegistry);
 
+            var projectileUpdateHandler = GetComponentInChildren<ProjectileUpdateHandler>(true);
+            projectileUpdateHandler.Init(projectileRegistry);
+            updateHandlerRegistry.Add(projectileUpdateHandler);
+            
             var projectileFactory = GetComponentInChildren<ProjectileFactory>(true);
             var projectileCollisionUseCase = GetComponentInChildren<ProjectileInteractUseCase>(true);
             
@@ -61,7 +73,7 @@ namespace Project
             gasolineFactory.Init();
             bushFactory.Init();
             
-            mapGenerator.Init(boxFactory, gasolineFactory, bushFactory);
+            mapGenerator.Init(cameraBoundsUpdateHandler, boxFactory, gasolineFactory, bushFactory);
             mapGenerator.Generate(0);
             
             GetComponentInChildren<GameUpdater>(true).Init();

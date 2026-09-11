@@ -2,29 +2,59 @@ namespace Project
 {
     using System.Collections.Generic;
     using UnityEngine;
+    using UnityEngine.Tilemaps;
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
     public class MapGenerator : MonoBehaviour
     {
+        [Header("Config")]
         [SerializeField]
         private MapConfig _config;
-
-        [SerializeField]
-        private Collider2D _wallPf;
-
-        [SerializeField]
-        private SpriteRenderer _floorPf;
         
-        private Vector2Int Size => _config.Size;
-
+        [Header("Tile maps")]
+        [SerializeField]
+        private Tilemap _floorTilemap = null;
+             
+        [SerializeField]
+        private Tilemap _wallTilemap = null;
+        
+        [SerializeField]
+        private Tile[] _floorTiles;
+   
+        [SerializeField]
+        private Tile[] _wallTiles;
+        
+        [Header("Prefabs")]
+        [SerializeField]
+        private EdgeCollider2D _borderPf;
+        
+        [SerializeField]
+        private SpriteRenderer _spawnPf;
+        
         private Dictionary<int, IContentFactory> _contentFactories = null;
-        private Vector2Int[] _spawns;
- 
+        private Vector2Int[] _occupied;
+        
+        private readonly Vector2Int[] _offsets = 
+        {
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 0),
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, 1),
+            new Vector2Int(1, -1),
+            new Vector2Int(-1, -1),
+            new Vector2Int(-1, 1),
+        };
+
+        private CameraBoundsUpdateHandler _cameraBounds = null;
         private bool _isInitialized = false;
 
-        public void Init(params IContentFactory[] contentFactories)
+        private Vector2Int Size => _config.Size;
+        
+        public void Init(CameraBoundsUpdateHandler cameraBounds, params IContentFactory[] contentFactories)
         {
+            _cameraBounds = cameraBounds;
             _contentFactories = new Dictionary<int, IContentFactory>();
             foreach (var factory in contentFactories)
             {
@@ -38,54 +68,56 @@ namespace Project
         {
             Random.InitState(seed);
             
+            SetupCameraBounds();
+            
             GenerateBorders();
-            GenerateFloor();
+            GenerateFloorAndWalls();
 
             GenerateSpawns();
             
             GenerateContent();
         }
+
+        private void SetupCameraBounds()
+        {
+            var bounds = new Bounds(_floorTilemap.layoutGrid.transform.position, (Vector2) Size);
+            _cameraBounds.SetBounds(bounds);
+        }
         
         private void GenerateBorders()
         {
-            for (int i = 0; i < 4; i++)
+            var wall = Instantiate(_borderPf, Vector3.one * -0.5f, Quaternion.identity);
+            wall.points = new Vector2[]
+            { 
+                _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(0, 0, 0)), 
+                _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(Size.x, 0, 0)), 
+                _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(Size.x, Size.y, 0)),
+                _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(0, Size.y, 0)), 
+                _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(0, 0, 0))
+            };
+        }
+        
+        private void GenerateFloorAndWalls()
+        {
+            for (int y = -1; y < Size.y + 1; y++)
+            for (int x = -1; x < Size.x + 1; x++)
             {
-                var wall = Instantiate(_wallPf, transform.position, Quaternion.identity);
-
-                switch (i)
+                if (y < 0 || x < 0 || y >= Size.y || x >= Size.x)
                 {
-                    case 0:
-                        wall.transform.position = Vector2.right * (Size.x / 2f);
-                        wall.transform.localScale = new Vector3(1, Size.y, 1f);
-                        break;
-                    case 1:
-                        wall.transform.position = Vector2.left * (Size.y / 2f);
-                        wall.transform.localScale = new Vector3(1, Size.y, 1f);
-                        break;
-                    case 2:
-                        wall.transform.position = Vector2.up * (Size.y / 2f);
-                        wall.transform.localScale = new Vector3(Size.x, 1, 1f);
-                        break;
-                    case 3:
-                        wall.transform.position = Vector2.down * (Size.y / 2f);
-                        wall.transform.localScale = new Vector3(Size.x, 1, 1f);
-                        break;
+                    _wallTilemap.SetTile(new Vector3Int(x, y, 0), _wallTiles[Random.Range(0, _wallTiles.Length)]);
+                }
+                else
+                {
+                    _floorTilemap.SetTile(new Vector3Int(x, y, 0), _floorTiles[Random.Range(0, _floorTiles.Length)]);
                 }
             }
         }
         
-        private void GenerateFloor()
-        {
-            var floor = Instantiate(_floorPf, transform.position, Quaternion.identity);
-            floor.transform.localScale = new Vector3(Size.x, Size.y, 1);
-            
-        }
-        
         private void GenerateSpawns()
         {
-            _spawns = new Vector2Int[_config.SpawnCount];
+            _occupied = new Vector2Int[_config.SpawnCount];
             
-            for (int i = 0; i < _spawns.Length; i++)
+            for (int i = 0; i < _occupied.Length; i++)
             {
                 Vector2Int spawnPos;
                 
@@ -95,17 +127,26 @@ namespace Project
                 } 
                 while (IsOccupied(spawnPos));
                 
-                _spawns[i] = spawnPos;
+                _occupied[i] = spawnPos;
+                Instantiate(_spawnPf, CalcWorldPosFor(spawnPos), Quaternion.identity, transform);
             }
         }
 
         private bool IsOccupied(Vector2Int pos)
         {
-            foreach (var spawn in _spawns)
+            foreach (var occupied in _occupied)
             {
-                if (spawn.x == pos.x && spawn.y == pos.y)
+                if (occupied.x == pos.x && occupied.y == pos.y)
                 {
                     return true;
+                }
+
+                foreach (var offset in _offsets)
+                {
+                    if (occupied.x == pos.x + offset.x && occupied.y == pos.y + offset.y)
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -114,17 +155,21 @@ namespace Project
 
         private void GenerateContent()
         {
-            for (int y = 1; y < Size.y-1; y++) 
-            for (int x = 1; x < Size.x-1; x++)
+            for (int y = 0; y < Size.y; y++) 
+            for (int x = 0; x < Size.x; x++)
             {
-                var contentId = GetContentId();
-
+                if (IsOccupied(new Vector2Int(x, y)))
+                {
+                    continue;
+                }
+                
+                int contentId = GetContentId();
                 if (contentId == -1)
                 {
                     continue;
                 }
 
-                _contentFactories[contentId].CreateOn(x, y);
+                _contentFactories[contentId].CreateOn(CalcWorldPosFor(x, y));
             }
         }
 
@@ -149,6 +194,16 @@ namespace Project
             
             return -1;
         }
+
+        private Vector2 CalcWorldPosFor(Vector2Int pos)
+        {
+            return _floorTilemap.GetCellCenterWorld((Vector3Int) pos);
+        } 
+        
+        private Vector2 CalcWorldPosFor(int x, int y)
+        {
+            return _floorTilemap.GetCellCenterWorld(new Vector3Int(x, y, 0));
+        } 
 
 #if UNITY_EDITOR
         private void Start()

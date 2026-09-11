@@ -11,6 +11,9 @@ namespace Project
         private static readonly int SaturationPhaseId = Shader.PropertyToID("_SaturationPhase");
 
         [SerializeField]
+        private Sprite[] _spriteVariants = null;
+        
+        [SerializeField]
         private Color _flashColor = Color.red;
         
         private SpriteRenderer _spriteRenderer;
@@ -24,6 +27,7 @@ namespace Project
             _mpb = new MaterialPropertyBlock();
             
             _spriteRenderer = GetComponent<SpriteRenderer>();
+            _spriteRenderer.sprite = _spriteVariants[Random.Range(0, _spriteVariants.Length)];
             _spriteRenderer.GetPropertyBlock(_mpb);
             
             _isInitialized = true;

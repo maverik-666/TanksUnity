@@ -38,11 +38,11 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Background
-    uniqueID: 575209273
+  - name: Floor
+    uniqueID: 2287420423
     locked: 0
-  - name: Star Polygon
-    uniqueID: 1407651189
+  - name: OnFloor
+    uniqueID: 575209273
     locked: 0
   - name: Default
     uniqueID: 0

@@ -21,9 +21,10 @@ namespace Project
             _isInitialized = true;
         }
         
-        public void CreateOn(int x, int y)
+        public void CreateOn(Vector2 pos)
         {
-            var box = Instantiate(_boxPf, new Vector3(x,y,0), Quaternion.identity, transform);
+            
+            var box = Instantiate(_boxPf, pos, Quaternion.Euler(0,0, 90 * Random.Range(0, 4)), transform);
             box.Init();
         }
 

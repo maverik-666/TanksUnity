@@ -26,12 +26,13 @@ namespace Project
     public class ContentChance
     {
         [SerializeField]
-        private int _id;
+        private MapContentId _contentId;
 
+        [Range(0, 1f)]
         [SerializeField]
         private float _chance;
         
-        public int ID => _id;
+        public int ID => _contentId.ID;
         
         public float Chance => _chance;
     }

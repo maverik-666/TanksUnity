@@ -1,9 +1,11 @@
 namespace Project
 {
+    using UnityEngine;
+
     public interface IContentFactory
     {
         public MapContentId ContentId { get; }
         
-        public void CreateOn(int x, int y);
+        public void CreateOn(Vector2 pos);
     }
 }

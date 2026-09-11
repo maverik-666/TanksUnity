@@ -21,9 +21,9 @@ namespace Project
             _isInitialized = true;
         }
         
-        public void CreateOn(int x, int y)
+        public void CreateOn(Vector2 pos)
         {
-            var gasoline = Instantiate(_gasolinePf, new Vector3(x,y,0), Quaternion.identity, transform);
+            var gasoline = Instantiate(_gasolinePf, pos, Quaternion.Euler(0,0, 45 * Random.Range(0, 8)), transform);
             gasoline.Init();
         }
 
