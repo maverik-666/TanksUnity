@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b05209612434138a548aa3c21472068, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Bush
-  _vfxId: {fileID: 11400000, guid: c2b8ac407d64e8749a4cd4eb660d9381, type: 2}
+  _vfxId: {fileID: 11400000, guid: a62c4b2eb2a1293439b91b95b88ea495, type: 2}
 --- !u!58 &2856927249303417230
 CircleCollider2D:
   m_ObjectHideFlags: 0

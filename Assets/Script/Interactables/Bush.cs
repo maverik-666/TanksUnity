@@ -19,7 +19,7 @@ namespace Project
             _isInitialized = true;
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             _oneShotVFXFactory.Create(_vfxId, other.transform.position);
         }
