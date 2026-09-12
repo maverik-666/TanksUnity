@@ -76,6 +76,7 @@ namespace Project
         public void Move(Vector2 input, float deltaTime)
         {
             _tankMovementUseCase.Execute(this, input, deltaTime);
+            _tankSkinRenderer.UpdatePosition();
         }
         
         public void ApplyRecoil(Vector2 force)

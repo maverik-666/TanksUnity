@@ -1,5 +1,6 @@
 namespace Project
 {
+    using System;
     using DG.Tweening;
     using UnityEngine;
 
@@ -19,11 +20,15 @@ namespace Project
         [SerializeField]
         private Color _dimColor = Color.grey;
         
+        [SerializeField]
+        private ParticleSystem _trackTrailParticles = null;
+        
         private SpriteRenderer[] _tankRenderers;
 
         private Tween _recolorTween = null;
         private Tween _flashTween = null;
         private Material _material;
+        private ParticleSystem.MainModule _trackTrailMain;
         private bool _isInitialized = false;
         
         public void Init(Tank tank)
@@ -35,6 +40,8 @@ namespace Project
             {
                 spriteRenderer.material = _material;
             }
+
+            _trackTrailMain = _trackTrailParticles.main;
             
             _isInitialized = true;
         }
@@ -77,6 +84,11 @@ namespace Project
                     spriteRenderer.color = color;
                 }
             }
+        }
+
+        public void UpdatePosition()
+        {
+            _trackTrailMain.startRotation = transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         }
 
 #if UNITY_EDITOR
