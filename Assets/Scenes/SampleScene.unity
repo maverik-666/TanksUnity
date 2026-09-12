@@ -811,6 +811,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 890973374}
+  - component: {fileID: 890973376}
   - component: {fileID: 890973375}
   m_Layer: 0
   m_Name: Projectile Factory
@@ -846,7 +847,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf52cfb69fef44fb9638740605717a22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.ProjectileFactory
+  ShowTopMostFoldoutHeaderGroup: 1
   _projectilePf: {fileID: 4044431686176738370, guid: efdf9630eeecf4b459a435eafed73760, type: 3}
+--- !u!114 &890973376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890973373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3043707918
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  m_InScenePlacedDisabledByDefault: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 0
+  m_InScenePlaced: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 0
+  SyncOwnerTransformWhenParented: 0
+  AllowOwnerToParent: 0
 --- !u!1 &1020856690
 GameObject:
   m_ObjectHideFlags: 0
@@ -1121,8 +1150,9 @@ GameObject:
   - component: {fileID: 1397271625}
   - component: {fileID: 1397271626}
   - component: {fileID: 1397271627}
+  - component: {fileID: 1397271628}
   m_Layer: 0
-  m_Name: Network Damage UseCase
+  m_Name: Network UseCases
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1161,14 +1191,14 @@ MonoBehaviour:
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
+  SynchronizeTransform: 0
   m_InScenePlaced: 1
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
-  SpawnWithObservers: 1
+  SpawnWithObservers: 0
   DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
+  AutoObjectParentSync: 0
+  SyncOwnerTransformWhenParented: 0
   AllowOwnerToParent: 0
 --- !u!114 &1397271627
 MonoBehaviour:
@@ -1183,6 +1213,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.NetworkDamageUseCase
   ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &1397271628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397271624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfd564e1b422f60418ec98332147522f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.NetworkProjectileInteractUseCase
+  ShowTopMostFoldoutHeaderGroup: 1
+  _oneShotVFXId: {fileID: 11400000, guid: 5d161f4a976d21d4aa9a5ee631c2a810, type: 2}
+  _forcePower: 20
 --- !u!1 &1638532069
 GameObject:
   m_ObjectHideFlags: 0
@@ -1376,7 +1421,6 @@ GameObject:
   - component: {fileID: 2061321453}
   - component: {fileID: 2061321452}
   - component: {fileID: 2061321451}
-  - component: {fileID: 2061321454}
   m_Layer: 0
   m_Name: --- USECASES ---
   m_TagString: Untagged
@@ -1437,20 +1481,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efae1fd88d633b341aaf07e766fdbc2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.HullMovementUseCase
---- !u!114 &2061321454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061321449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d17f4a95c2c240d3b90c5c6a2138dfa2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.ProjectileCollisionUseCase
-  _oneShotVFXId: {fileID: 11400000, guid: 5d161f4a976d21d4aa9a5ee631c2a810, type: 2}
-  _forcePower: 20
 --- !u!1 &2111663355
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,7 +15,7 @@ namespace Project
         [SerializeField]
         private LayerMask _layerMask;
 
-        private ProjectileInteractUseCase _projectileInteractUseCase = null;
+        private IProjectileInteractUseCase _projectileInteractUseCase = null;
         
         private int _damage = 0;
         private Tank _owner = null;
@@ -36,7 +36,7 @@ namespace Project
             _owner = owner;
             _direction = direction;
             
-            _projectileInteractUseCase = this.Resolve<ProjectileInteractUseCase>();
+            _projectileInteractUseCase = this.Resolve<IProjectileInteractUseCase>();
             
             _isInitialized = true;
         }

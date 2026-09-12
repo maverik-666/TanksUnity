@@ -22,10 +22,12 @@ namespace Project
             var tankFactory = _context.Resolve<TankFactory>();
             var spawnPoint = _context.Resolve<Registry<SpawnPoint>>();
             var position = spawnPoint.Items[Random.Range(0, spawnPoint.Items.Count)].Position;
-        
+            
+            int id = (int) NetworkObjectId + 10000;
             _tank = tankFactory.Create(position);
-            _context.Resolve<IndexedRegistry<IDamageable>>().Add((int)NetworkObjectId + 10000, _tank);
-
+            _context.Resolve<IndexedRegistry<IDamageable>>().Add(id, _tank);
+            _context.Resolve<AllTankRegistry>().Add(id, _tank);
+            
             if (IsServer)
             {
                 _tankPosition.Value = position;
@@ -60,7 +62,6 @@ namespace Project
             ShootRpc();
         }
         
-
         [Rpc(SendTo.Server)]
         private void ShootRpc()
         {
@@ -70,7 +71,7 @@ namespace Project
                 ShootValidatedRpc();
             }
         }
-        
+
         [Rpc(SendTo.NotServer)]
         private void ShootValidatedRpc()
         {

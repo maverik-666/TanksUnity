@@ -17,6 +17,9 @@ namespace Project
             
             var ownerPlayerRegistry = new OwnerPlayerRegistry();
             Bind(ownerPlayerRegistry);
+                
+            var allTankRegistry = new AllTankRegistry();
+            Bind(allTankRegistry);
 
             var spawnPointRegistry = new Registry<SpawnPoint>(20);
             Bind(spawnPointRegistry);
@@ -53,16 +56,17 @@ namespace Project
             vfxFactory.Init();
             
             var projectileRegistry = new Registry<Projectile>(50);
+            var indexedProjectileRegistry = new IndexedRegistry<Projectile>(50);
 
             var projectileUpdateHandler = GetComponentInChildren<ProjectileUpdateHandler>(true);
             projectileUpdateHandler.Init(projectileRegistry);
             updateHandlerRegistry.Add(projectileUpdateHandler);
             
             var projectileFactory = GetComponentInChildren<ProjectileFactory>(true);
-            var projectileCollisionUseCase = GetComponentInChildren<ProjectileInteractUseCase>(true);
-            
-            projectileFactory.Init(projectileRegistry);
-            projectileCollisionUseCase.Init(projectileFactory, vfxFactory);
+            var projectileCollisionUseCase = GetComponentInChildren<NetworkProjectileInteractUseCase>(true);
+
+            projectileFactory.Init(projectileRegistry, indexedProjectileRegistry, allTankRegistry);
+            projectileCollisionUseCase.Init(indexedProjectileRegistry, projectileFactory, vfxFactory);
             
             GetComponentInChildren<TurretAimUseCase>(true).Init();
             GetComponentInChildren<TankMovementUseCase>(true).Init();
