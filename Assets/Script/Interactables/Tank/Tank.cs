@@ -107,7 +107,7 @@ namespace Project
 
         public void Die()
         {
-            _rigidbody2D.mass = 500f;
+            _rigidbody2D.mass = 500000f;
             _tankSkinRenderer.Dim();
             foreach (var destructibleStrategy in _destructibleStrategies)
             {

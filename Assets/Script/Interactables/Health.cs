@@ -17,6 +17,8 @@ namespace Project
         
         public bool IsDead => Current <= 0;
 
+        public event Action Changed;
+
         public Health(int initial)
         {
             SetHealth(initial);
@@ -25,6 +27,7 @@ namespace Project
         public void SetHealth(int max)
         {
             _current = _max = max;
+            Changed?.Invoke();
         }
 
         public void TakeDamage(int damage)
@@ -35,6 +38,8 @@ namespace Project
             { 
                 _current = 0;
             }
+            
+            Changed?.Invoke();
         }
     }
 }

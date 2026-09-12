@@ -36,6 +36,8 @@ namespace Project
             cameraBoundsUpdateHandler.Init(camera);
             updateHandlerRegistry.Add(cameraBoundsUpdateHandler);
             
+            GetComponentInChildren<PlayerHealthBar>(true).Init();
+            
             GetComponentInChildren<TankFactory>(true).Init();
             
             var inputUpdateHandler = GetComponentInChildren<InputUpdateHandler>(true);
@@ -73,7 +75,6 @@ namespace Project
             GetComponentInChildren<TankShootUseCase>(true).Init();
 
             var mapGenerator = GetComponentInChildren<MapGenerator>(true);
-
             var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
             
             var boxFactory = GetComponentInChildren<BoxFactory>(true);

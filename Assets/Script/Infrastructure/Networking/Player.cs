@@ -96,6 +96,7 @@ namespace Project
             _ownerRegistry = _context.Resolve<OwnerPlayerRegistry>();
             _ownerRegistry.Add(this);
             _context.Resolve<CameraFollowHandler>().Teleport();
+            _context.Resolve<PlayerHealthBar>().SetTarget(_tank.Health);
         } 
 
         public void Shoot()
