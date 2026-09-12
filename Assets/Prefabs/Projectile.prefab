@@ -10,9 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4433629986522285761}
   - component: {fileID: 4044431686176738370}
-  - component: {fileID: 8797214722342312764}
-  - component: {fileID: 1017650584607004485}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,70 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36456e22003c4c108ac50acfc9cc0c5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Projectile
-  _speed: 2000
---- !u!50 &8797214722342312764
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2412986856735958146}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 0.01
-  m_LinearDamping: 0.01
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
+  _speed: 10
+  _radius: 0.05
+  _layerMask:
     serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
---- !u!58 &1017650584607004485
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2412986856735958146}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.05
+    m_Bits: 503
 --- !u!1 &3616523093870524510
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,7 +60,7 @@ GameObject:
   m_Component:
   - component: {fileID: 113315526718135219}
   - component: {fileID: 3771535262467622218}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ProjectileSkinRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

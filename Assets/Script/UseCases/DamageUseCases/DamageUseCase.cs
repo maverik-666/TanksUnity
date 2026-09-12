@@ -4,7 +4,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class DamageUseCase : MonoBehaviour
+    public class DamageUseCase : MonoBehaviour, IDamageUseCase
     {
         private bool _isInitialized = false;
 

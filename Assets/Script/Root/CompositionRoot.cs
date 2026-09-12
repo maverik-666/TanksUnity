@@ -6,8 +6,6 @@ namespace Project
     {
         private static CompositionRoot _instance = null;
         
-        private InputSystem _inputSystem = null;
-
         public static CompositionRoot Instance => _instance;
         
         public void Awake()
@@ -19,6 +17,12 @@ namespace Project
             
             var ownerPlayerRegistry = new OwnerPlayerRegistry();
             Bind(ownerPlayerRegistry);
+
+            var spawnPointRegistry = new Registry<SpawnPoint>(20);
+            Bind(spawnPointRegistry);
+            
+            var damageableRegistry = new IndexedRegistry<IDamageable>(500);
+            Bind(damageableRegistry);
             
             var camera = GetComponentInChildren<Camera>(true);
             var cameraFollowHandler = GetComponentInChildren<CameraFollowHandler>(true);
@@ -31,18 +35,19 @@ namespace Project
             
             GetComponentInChildren<TankFactory>(true).Init();
             
-            _inputSystem = GetComponentInChildren<InputSystem>(true);
-            _inputSystem.Init();
+            var inputUpdateHandler = GetComponentInChildren<InputUpdateHandler>(true);
+            inputUpdateHandler.Init();
+            updateHandlerRegistry.Add(inputUpdateHandler);
 
             var ownerPlayerInputHandler = GetComponentInChildren<OwnerPlayerInputHandler>(true);
-            ownerPlayerInputHandler.Init(_inputSystem, camera, ownerPlayerRegistry);
+            ownerPlayerInputHandler.Init(inputUpdateHandler, camera, ownerPlayerRegistry);
             updateHandlerRegistry.Add(ownerPlayerInputHandler);
             
             var timerUpdateHandler = GetComponentInChildren<TimerUpdateHandler>(true);
             timerUpdateHandler.Init();
             updateHandlerRegistry.Add(timerUpdateHandler);
             
-            GetComponentInChildren<DamageUseCase>(true).Init();
+            GetComponentInChildren<NetworkDamageUseCase>(true).Init(damageableRegistry);
             
             var vfxFactory = GetComponentInChildren<OneShotVFXFactory>(true);
             vfxFactory.Init();
@@ -64,19 +69,23 @@ namespace Project
             GetComponentInChildren<TankShootUseCase>(true).Init();
 
             var mapGenerator = GetComponentInChildren<MapGenerator>(true);
+
+            var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
             
             var boxFactory = GetComponentInChildren<BoxFactory>(true);
             var gasolineFactory = GetComponentInChildren<GasolineFactory>(true);
             var bushFactory = GetComponentInChildren<BushFactory>(true);
             
-            boxFactory.Init();
-            gasolineFactory.Init();
+            destructibleRegistrator.Init(damageableRegistry);
+            
+            boxFactory.Init(destructibleRegistrator);
+            gasolineFactory.Init(destructibleRegistrator);
             bushFactory.Init();
             
             mapGenerator.Init(cameraBoundsUpdateHandler, boxFactory, gasolineFactory, bushFactory);
             mapGenerator.Generate(0);
             
-            GetComponentInChildren<GameUpdater>(true).Init();
+            GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
         }
     }
 }

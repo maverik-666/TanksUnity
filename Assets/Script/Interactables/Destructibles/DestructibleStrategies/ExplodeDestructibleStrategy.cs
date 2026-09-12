@@ -14,14 +14,14 @@ namespace Project
         [SerializeField]
         private float _radius = 2;
 
-        private DamageUseCase _damageUseCase = null;
+        private IDamageUseCase _damageUseCase = null;
         private IDamageable _damageable = null;
         
         private bool _isInitialized = false;
 
         public override void Init(IDamageable damageable)
         {
-            _damageUseCase = this.Resolve<DamageUseCase>();
+            _damageUseCase = this.Resolve<IDamageUseCase>();
             _damageable = damageable;
             _isInitialized = true;
         }

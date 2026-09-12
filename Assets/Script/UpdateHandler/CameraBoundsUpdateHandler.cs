@@ -11,6 +11,8 @@ namespace Project
         private bool _hasBounds = false;
         private bool _isInitialized = false;
         
+        public bool Enabled => enabled;
+        
         public void Init(Camera camera)
         {
             _camera = camera;

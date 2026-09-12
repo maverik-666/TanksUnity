@@ -16,6 +16,7 @@ MonoBehaviour:
     TurretStats:
       RotationSpeed: 200
       ShootCooldown: 0.7
+      Damage: 50
     MovementSpeed: 25
     Agility: 300
     Health: 200

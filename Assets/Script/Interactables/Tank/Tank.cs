@@ -18,7 +18,7 @@ namespace Project
         private Timer _invincibilityTimer = null;
         
         private DestructibleStrategy[] _destructibleStrategies = null;
-        private DamageUseCase _damageUseCase = null;
+        private IDamageUseCase _damageUseCase = null;
         
         private TankShootUseCase _tankShootUseCase = null;
         private TankMovementUseCase _tankMovementUseCase = null;
@@ -40,6 +40,8 @@ namespace Project
         
         
         public Health Health => _health;
+        
+        public bool IsDead => _health.IsDead;
 
         public bool CanNotTakeDamage => _invincibilityTimer.IsRunning;
 
@@ -52,7 +54,7 @@ namespace Project
             
             _tankShootUseCase = this.Resolve<TankShootUseCase>();
             _tankMovementUseCase = this.Resolve<TankMovementUseCase>();
-            _damageUseCase = this.Resolve<DamageUseCase>();
+            _damageUseCase = this.Resolve<IDamageUseCase>();
             
             _tankSkinRenderer = GetComponentInChildren<TankSkinRenderer>(true);
             _turret = GetComponentInChildren<Turret>(true);

@@ -33,7 +33,7 @@ namespace Project
 
         private void ShootProjectileBy(Tank tank)
         { 
-            _projectileFactory.Create(tank, tank.Turret.ProjectilePosition, 25, tank.Turret.Rotation);
+            _projectileFactory.Create(tank, tank.Turret.ProjectilePosition, tank.Turret.TurretStats.Damage, tank.Turret.Rotation);
         } 
         
 #if UNITY_EDITOR  

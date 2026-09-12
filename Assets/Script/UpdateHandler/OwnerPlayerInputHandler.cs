@@ -7,20 +7,22 @@ namespace Project
     public class OwnerPlayerInputHandler : MonoBehaviour, IUpdateHandler
     {
         private Camera _camera = null;
-        private InputSystem _inputSystem = null;
+        private InputUpdateHandler _inputUpdateHandler = null;
         private Registry<Player> _playerRegistry = null;
         private bool _isInitialized = false;
+
+        public bool Enabled => enabled;
         
-        public void Init(InputSystem inputSystem, Camera camera, Registry<Player> playerRegistry)
+        public void Init(InputUpdateHandler inputUpdateHandler, Camera camera, Registry<Player> playerRegistry)
         {
-            _inputSystem = inputSystem;
+            _inputUpdateHandler = inputUpdateHandler;
             _camera = camera;
             _playerRegistry = playerRegistry;
-            _inputSystem.ShootListener.Pressed += Shoot;
+            _inputUpdateHandler.ShootListener.Pressed += Shoot;
             
             _isInitialized = true;
         }
-
+        
         public void UpdateTick(float deltaTime)
         {
             if (_playerRegistry.Count == 0)
@@ -36,13 +38,13 @@ namespace Project
         {
             foreach (var player in _playerRegistry.Items)
             { 
-                player.Move(_inputSystem.MoveInput, deltaTime);
+                player.Move(_inputUpdateHandler.MoveInput, deltaTime);
             }
         }
 
         private void Rotate(float deltaTime)
         {
-            var mousePosition = _camera.ScreenToWorldPoint(_inputSystem.MouseScreenPosition);
+            var mousePosition = _camera.ScreenToWorldPoint(_inputUpdateHandler.MouseScreenPosition);
             
             foreach (var player in _playerRegistry.Items)
             { 
@@ -60,7 +62,7 @@ namespace Project
 
         private void OnDestroy()
         {
-            _inputSystem.ShootListener.Pressed -= Shoot;
+            _inputUpdateHandler.ShootListener.Pressed -= Shoot;
         }
 
 #if UNITY_EDITOR  

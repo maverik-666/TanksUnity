@@ -145,7 +145,7 @@ Transform:
   m_GameObject: {fileID: 66020902}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.77, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -625,6 +625,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1020856691}
   - {fileID: 890973374}
   - {fileID: 2111663356}
   - {fileID: 410540298}
@@ -846,6 +847,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.ProjectileFactory
   _projectilePf: {fileID: 4044431686176738370, guid: efdf9630eeecf4b459a435eafed73760, type: 3}
+--- !u!1 &1020856690
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1020856691}
+  - component: {fileID: 1020856692}
+  m_Layer: 0
+  m_Name: Destructible Registrator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1020856691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020856690}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 700161233}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1020856692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1020856690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b6f47aa9e5f4927b264cbebb81b71ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.DestructibleRegistrator
 --- !u!1 &1050682435
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,6 +1110,79 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.BushFactory
   _contentId: {fileID: 11400000, guid: ebe658fb05b1c4b4ebb97e7cd88ccb31, type: 2}
   _bushPf: {fileID: 6914077444883137740, guid: eab18cfc44616ad46a099fb94d43b7d6, type: 3}
+--- !u!1 &1397271624
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1397271625}
+  - component: {fileID: 1397271626}
+  - component: {fileID: 1397271627}
+  m_Layer: 0
+  m_Name: Network Damage UseCase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1397271625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397271624}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2061321450}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1397271626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397271624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3147814946
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  m_InScenePlacedDisabledByDefault: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &1397271627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397271624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83ea4583e6eb4ae18fe146a154d0331a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.NetworkDamageUseCase
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &1638532069
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,7 +1290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.MapGenerator
   _config:
-    _size: {x: 25, y: 25}
+    _size: {x: 10, y: 10}
     _content:
     - _contentId: {fileID: 11400000, guid: 3866189d8b3839241a6a531927135e24, type: 2}
       _chance: 0.1
@@ -1195,7 +1313,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 002a508916c3f6e449a097b39db0de05, type: 2}
   - {fileID: 11400000, guid: 55e9394a5f2ffaa409eee416abc12571, type: 2}
   _borderPf: {fileID: 6898974075870320576, guid: f1cfb4d9ca6f30541afea0690be643b9, type: 3}
-  _spawnPf: {fileID: 6442387628496665126, guid: f9edc37e33004f3498adcb6f873dd452, type: 3}
+  _spawnPf: {fileID: -4532765491226652451, guid: f9edc37e33004f3498adcb6f873dd452, type: 3}
 --- !u!1 &1891288021
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,7 +1377,6 @@ GameObject:
   - component: {fileID: 2061321452}
   - component: {fileID: 2061321451}
   - component: {fileID: 2061321454}
-  - component: {fileID: 2061321455}
   m_Layer: 0
   m_Name: --- USECASES ---
   m_TagString: Untagged
@@ -1279,7 +1396,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1397271625}
   m_Father: {fileID: 1891288023}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2061321451
@@ -1333,18 +1451,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.ProjectileCollisionUseCase
   _oneShotVFXId: {fileID: 11400000, guid: 5d161f4a976d21d4aa9a5ee631c2a810, type: 2}
   _forcePower: 20
---- !u!114 &2061321455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061321449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e941d2fa5f946c08b1966cf8c245237, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.DamageUseCase
 --- !u!1 &2111663355
 GameObject:
   m_ObjectHideFlags: 0

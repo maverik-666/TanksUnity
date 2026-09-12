@@ -11,21 +11,23 @@ namespace Project
         
         [SerializeField]
         private Destructible _boxPf = null;
-        
-        private bool _isInitialized = false;
 
+        private DestructibleRegistrator _destructibleRegistrator = null;
+        private bool _isInitialized = false;
+        
         public MapContentId ContentId => _contentId;
         
-        public void Init()
+        public void Init(DestructibleRegistrator destructibleRegistrator)
         {
+            _destructibleRegistrator = destructibleRegistrator;
             _isInitialized = true;
         }
         
         public void CreateOn(Vector2 pos)
         {
-            
             var box = Instantiate(_boxPf, pos, Quaternion.Euler(0,0, 90 * Random.Range(0, 4)), transform);
             box.Init();
+            _destructibleRegistrator.Register(box);
         }
 
 #if UNITY_EDITOR

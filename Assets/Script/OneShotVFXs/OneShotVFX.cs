@@ -22,9 +22,9 @@ namespace Project
 
         public void Play(Action callback = null)
         {
-            _particleSystem.Play(true);
             _particleSystemEventHandler.ParticleSystemStopped += OnParticleStopped;
-
+            _particleSystem.Play(true);
+            
             void OnParticleStopped()
             { 
                 _particleSystemEventHandler.ParticleSystemStopped -= OnParticleStopped;

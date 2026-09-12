@@ -7,5 +7,6 @@ namespace Project
     {
         public float RotationSpeed;
         public float ShootCooldown;
+        public int Damage;
     }
 }

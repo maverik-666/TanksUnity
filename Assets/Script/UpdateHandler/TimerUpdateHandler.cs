@@ -10,6 +10,8 @@ namespace Project
         private List<Timer> _timers = new List<Timer>();
         private bool _isInitialized = false;
         
+        public bool Enabled => enabled;
+        
         public void Init()
         {
             _isInitialized = true;

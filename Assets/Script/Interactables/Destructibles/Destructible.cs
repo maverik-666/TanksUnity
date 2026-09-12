@@ -20,7 +20,7 @@ namespace Project
         private Timer _invincibilityTimer = null;
         
         private DestructibleStrategy[] _destructibleStrategies = null;
-        private DamageUseCase _damageUseCase = null;
+        private IDamageUseCase _damageUseCase = null;
         private DestructibleSkinRenderer _skinRenderer = null;
         private bool _isInitialized = false;
         
@@ -38,7 +38,7 @@ namespace Project
             _skinRenderer = GetComponentInChildren<DestructibleSkinRenderer>(true);
             _skinRenderer.Init();
             
-            _damageUseCase = this.Resolve<DamageUseCase>();
+            _damageUseCase = this.Resolve<IDamageUseCase>();
             _destructibleStrategies = GetComponentsInChildren<DestructibleStrategy>(true);
             
             foreach (var destructibleStrategy in _destructibleStrategies)

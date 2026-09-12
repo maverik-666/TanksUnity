@@ -30,7 +30,7 @@ namespace Project
         private EdgeCollider2D _borderPf;
         
         [SerializeField]
-        private SpriteRenderer _spawnPf;
+        private SpawnPoint _spawnPf;
         
         private Dictionary<int, IContentFactory> _contentFactories = null;
         private Vector2Int[] _occupied;
@@ -47,6 +47,7 @@ namespace Project
             new Vector2Int(-1, 1),
         };
 
+        private Registry<SpawnPoint> _spawnPointRegistry = null; 
         private CameraBoundsUpdateHandler _cameraBounds = null;
         private bool _isInitialized = false;
 
@@ -54,6 +55,7 @@ namespace Project
         
         public void Init(CameraBoundsUpdateHandler cameraBounds, params IContentFactory[] contentFactories)
         {
+            _spawnPointRegistry = this.Resolve<Registry<SpawnPoint>>();
             _cameraBounds = cameraBounds;
             _contentFactories = new Dictionary<int, IContentFactory>();
             foreach (var factory in contentFactories)
@@ -80,7 +82,7 @@ namespace Project
 
         private void SetupCameraBounds()
         {
-            var bounds = new Bounds(_floorTilemap.layoutGrid.transform.position, (Vector2) Size);
+            var bounds = new Bounds(_floorTilemap.layoutGrid.transform.position + new Vector3(Size.x/2f, Size.y/2f), (Vector2) Size);
             _cameraBounds.SetBounds(bounds);
         }
         
@@ -128,7 +130,8 @@ namespace Project
                 while (IsOccupied(spawnPos));
                 
                 _occupied[i] = spawnPos;
-                Instantiate(_spawnPf, CalcWorldPosFor(spawnPos), Quaternion.identity, transform);
+                var spawnPoint = Instantiate(_spawnPf, CalcWorldPosFor(spawnPos), Quaternion.identity, transform);
+                _spawnPointRegistry.Add(spawnPoint);
             }
         }
 

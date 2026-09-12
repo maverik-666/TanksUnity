@@ -3,7 +3,7 @@ namespace Project
     using UnityEngine;
     using UnityEngine.InputSystem;
 
-    public class InputSystem : MonoBehaviour
+    public class InputUpdateHandler : MonoBehaviour, IUpdateHandler
     {
         [SerializeField]
         private InputActionReference _positionActionReference;
@@ -25,7 +25,8 @@ namespace Project
 
         public ClickListener ShootListener => _shootListener;
 
-
+        public bool Enabled => enabled;
+        
         public void Init()
         {
             _positionActionReference.action.Enable();
@@ -33,7 +34,7 @@ namespace Project
             
             _shootListener = new ClickListener(_shootActionReference);
         }
-
+        
         public void UpdateTick(float deltaTime)
         {
             _mouseScreenPosition = _positionActionReference.action.ReadValue<Vector2>();

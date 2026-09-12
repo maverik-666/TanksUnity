@@ -1,27 +1,29 @@
 namespace Project
 {
-    using System;
     using UnityEngine;
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
     public class GameUpdater : MonoBehaviour
     {
-        private IUpdateHandler[] _updateHandlers = null;
+        private Registry<IUpdateHandler> _updateHandlerRegistry = null;
         private bool _isInitialized = false;
 
-        public void Init(params IUpdateHandler[] updateHandlers)
+        public void Init(Registry<IUpdateHandler> updateHandlerRegistry)
         {
-            _updateHandlers = updateHandlers;
+            _updateHandlerRegistry = updateHandlerRegistry;
             _isInitialized = true;
         }
 
         private void Update()
         {
             float deltaTime = Time.deltaTime;
-            foreach (var updateHandler in _updateHandlers)
+            foreach (var updateHandler in _updateHandlerRegistry.Items)
             {
-                updateHandler.UpdateTick(deltaTime);
+                if (updateHandler.Enabled)
+                {
+                    updateHandler.UpdateTick(deltaTime);
+                }
             }
         }
 

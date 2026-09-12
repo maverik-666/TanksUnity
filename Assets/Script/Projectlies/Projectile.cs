@@ -3,18 +3,23 @@ namespace Project
     using UnityEngine;
 
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Transform))]
     public class Projectile : MonoBehaviour
     {
         [SerializeField]
         private float _speed = 2;
+        
+        [SerializeField]
+        private float _radius = 0.05f;
+
+        [SerializeField]
+        private LayerMask _layerMask;
 
         private ProjectileInteractUseCase _projectileInteractUseCase = null;
         
         private int _damage = 0;
         private Tank _owner = null;
         private Vector2 _direction = Vector2.zero;
-        private Rigidbody2D _rigidbody2D = null;
         private bool _isInitialized = false;
         
         public Vector3 Position => transform.position;
@@ -31,7 +36,6 @@ namespace Project
             _owner = owner;
             _direction = direction;
             
-            _rigidbody2D = GetComponent<Rigidbody2D>();
             _projectileInteractUseCase = this.Resolve<ProjectileInteractUseCase>();
             
             _isInitialized = true;
@@ -39,12 +43,15 @@ namespace Project
 
         public void UpdateTick(float deltaTime)
         {
-            _rigidbody2D.linearVelocity = _direction * (_speed * deltaTime);
-        }
+            var lastPos = Position;
+            var newPos = transform.position = lastPos + (Vector3) _direction * (_speed * deltaTime);
+            
+            var hit = Physics2D.CircleCast(lastPos, _radius, newPos-lastPos, Vector3.Distance(newPos, lastPos), _layerMask);
 
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            _projectileInteractUseCase.Resolve(this, other);
+            if (hit.collider)
+            { 
+                _projectileInteractUseCase.Resolve(this, hit.collider);
+            }
         }
 
 #if UNITY_EDITOR

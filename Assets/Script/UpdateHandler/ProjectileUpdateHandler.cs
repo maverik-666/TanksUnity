@@ -9,16 +9,19 @@ namespace Project
         private Registry<Projectile> _projectiles = null;
         private bool _isInitialized = false;
 
+        public bool Enabled => enabled;
+        
         public void Init(Registry<Projectile> projectiles)
         {
             _projectiles = projectiles;
             _isInitialized = true;
         }
-
+        
         public void UpdateTick(float deltaTime)
         {
-            foreach (var projectile in _projectiles.Items)
+            for (int i = _projectiles.Items.Count - 1; i >= 0; i--)
             {
+                var projectile = _projectiles.Items[i];
                 projectile.UpdateTick(deltaTime);
             }
         }

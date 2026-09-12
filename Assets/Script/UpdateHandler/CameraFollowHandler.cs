@@ -12,6 +12,8 @@ namespace Project
 
         private Vector2 _pos;
 
+        public bool Enabled => enabled;
+        
         public void Init(Camera cam, OwnerPlayerRegistry playerRegistry)
         {
             _camera = cam;
@@ -26,13 +28,13 @@ namespace Project
                 return;
             }
             
-            _pos = Vector2.Lerp(_pos, _playerRegistry.Items[0].transform.position, 0.1f);
+            _pos = Vector2.Lerp(_pos, _playerRegistry.Items[0].TankPosition, 0.1f);
             _camera.transform.position = new Vector3(_pos.x, _pos.y, -10);
         }
 
         public void Teleport()
         {
-            _pos = _playerRegistry.Items[0].transform.position;
+            _pos = _playerRegistry.Items[0].TankPosition;
         } 
         
 #if UNITY_EDITOR
