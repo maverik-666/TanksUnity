@@ -12,11 +12,11 @@ namespace Project
         [SerializeField]
         private float _forcePower = 20;
         
-        private ProjectileFactory _projectileFactory = null;
+        private IProjectileFactory _projectileFactory = null;
         private OneShotVFXFactory _oneShotVFXFactory = null;
         private bool _isInitialized = false;
 
-        public void Init(ProjectileFactory projectileFactory, OneShotVFXFactory oneShotVFXFactory)
+        public void Init(IProjectileFactory projectileFactory, OneShotVFXFactory oneShotVFXFactory)
         {
             _projectileFactory = projectileFactory;
             _oneShotVFXFactory = oneShotVFXFactory;

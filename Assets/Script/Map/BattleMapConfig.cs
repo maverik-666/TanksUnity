@@ -4,7 +4,7 @@ namespace Project
     using UnityEngine;
 
     [Serializable]
-    public class MapConfig
+    public class BattleMapConfig
     {
         [SerializeField]
         private Vector2Int _size = new Vector2Int(25, 25);

@@ -4,14 +4,10 @@ namespace Project
     
     public class CompositionRoot : Context
     {
-        private static CompositionRoot _instance = null;
-        
-        public static CompositionRoot Instance => _instance;
-        
         public void Awake()
         {
-            _instance = this;
-
+            InitSelf(this);
+            
             var updateHandlerRegistry = new Registry<IUpdateHandler>(20);
             Bind(updateHandlerRegistry);
             
@@ -28,9 +24,8 @@ namespace Project
             Bind(damageableRegistry);
             
             var camera = GetComponentInChildren<Camera>(true);
-            var cameraFollowHandler = GetComponentInChildren<CameraFollowHandler>(true);
+            var cameraFollowHandler = GetComponentInChildren<CameraFollower>(true);
             cameraFollowHandler.Init(camera, ownerPlayerRegistry);
-            updateHandlerRegistry.Add(cameraFollowHandler);
 
             var cameraBoundsUpdateHandler = GetComponentInChildren<CameraBoundsUpdateHandler>(true);
             cameraBoundsUpdateHandler.Init(camera);
@@ -64,7 +59,7 @@ namespace Project
             projectileUpdateHandler.Init(projectileRegistry);
             updateHandlerRegistry.Add(projectileUpdateHandler);
             
-            var projectileFactory = GetComponentInChildren<ProjectileFactory>(true);
+            var projectileFactory = GetComponentInChildren<NetworkProjectileFactory>(true);
             var projectileCollisionUseCase = GetComponentInChildren<NetworkProjectileInteractUseCase>(true);
 
             projectileFactory.Init(projectileRegistry, indexedProjectileRegistry, allTankRegistry);
@@ -74,7 +69,7 @@ namespace Project
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init();
 
-            var mapGenerator = GetComponentInChildren<MapGenerator>(true);
+            var mapGenerator = GetComponentInChildren<BattleMapGenerator>(true);
             var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
             
             var boxFactory = GetComponentInChildren<BoxFactory>(true);
@@ -87,7 +82,7 @@ namespace Project
             gasolineFactory.Init(destructibleRegistrator);
             bushFactory.Init();
             
-            mapGenerator.Init(cameraBoundsUpdateHandler, boxFactory, gasolineFactory, bushFactory);
+            mapGenerator.Init(cameraBoundsUpdateHandler, spawnPointRegistry, boxFactory, gasolineFactory, bushFactory);
             mapGenerator.Generate(0);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);

@@ -26,7 +26,7 @@ namespace Project
                 }
             }
         }
-
+        
 #if UNITY_EDITOR
         private void Start()
         {

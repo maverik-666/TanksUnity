@@ -4,7 +4,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class CameraFollowHandler : MonoBehaviour, IUpdateHandler
+    public class CameraFollower : MonoBehaviour
     {
         private OwnerPlayerRegistry _playerRegistry;
         private Camera _camera = null;
@@ -12,7 +12,6 @@ namespace Project
 
         private Vector2 _pos;
 
-        public bool Enabled => enabled;
         
         public void Init(Camera cam, OwnerPlayerRegistry playerRegistry)
         {
@@ -21,7 +20,7 @@ namespace Project
             _isInitialized = true;
         }
         
-        public void UpdateTick(float deltaTime)
+        public void FixedUpdate()
         {
             if (_playerRegistry.Count == 0)
             {
@@ -29,7 +28,7 @@ namespace Project
             }
             
             _pos = Vector2.Lerp(_pos, _playerRegistry.Items[0].TankPosition, 0.1f);
-            _camera.transform.position = new Vector3(_pos.x, _pos.y, -10);
+            _camera.transform.position = Vector3.Lerp(_camera.transform.position, new Vector3(_pos.x, _pos.y, -10), 0.1f);
         }
 
         public void Teleport()
@@ -42,7 +41,7 @@ namespace Project
         {
             if (!_isInitialized)
             {
-                Debug.LogError($"{nameof(CameraFollowHandler)} not initialized", this);
+                Debug.LogError($"{nameof(CameraFollower)} not initialized", this);
             }
         }
 #endif

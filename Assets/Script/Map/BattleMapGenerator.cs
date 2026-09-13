@@ -6,11 +6,11 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class MapGenerator : MonoBehaviour
+    public class BattleMapGenerator : MonoBehaviour
     {
         [Header("Config")]
         [SerializeField]
-        private MapConfig _config;
+        private BattleMapConfig _config;
         
         [Header("Tile maps")]
         [SerializeField]
@@ -53,9 +53,9 @@ namespace Project
 
         private Vector2Int Size => _config.Size;
         
-        public void Init(CameraBoundsUpdateHandler cameraBounds, params IContentFactory[] contentFactories)
+        public void Init(CameraBoundsUpdateHandler cameraBounds, Registry<SpawnPoint> spawnPointRegistry, params IContentFactory[] contentFactories)
         {
-            _spawnPointRegistry = this.Resolve<Registry<SpawnPoint>>();
+            _spawnPointRegistry = spawnPointRegistry;
             _cameraBounds = cameraBounds;
             _contentFactories = new Dictionary<int, IContentFactory>();
             foreach (var factory in contentFactories)
@@ -213,7 +213,7 @@ namespace Project
         {
             if (!_isInitialized)
             {
-                Debug.LogError($"{nameof(MapGenerator)} not initialized", this);
+                Debug.LogError($"{nameof(BattleMapGenerator)} not initialized", this);
             }
         }
 #endif

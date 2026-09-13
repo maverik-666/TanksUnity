@@ -14,11 +14,11 @@ namespace Project
         private float _forcePower = 20;
 
         private IndexedRegistry<Projectile> _projectileRegistry = null;
-        private ProjectileFactory _projectileFactory = null;
+        private NetworkProjectileFactory _projectileFactory = null;
         private OneShotVFXFactory _oneShotVFXFactory = null;
         private bool _isInitialized = false;
 
-        public void Init(IndexedRegistry<Projectile> projectileRegistry, ProjectileFactory projectileFactory, OneShotVFXFactory oneShotVFXFactory)
+        public void Init(IndexedRegistry<Projectile> projectileRegistry, NetworkProjectileFactory projectileFactory, OneShotVFXFactory oneShotVFXFactory)
         {
             _projectileRegistry = projectileRegistry;
             _projectileFactory = projectileFactory;

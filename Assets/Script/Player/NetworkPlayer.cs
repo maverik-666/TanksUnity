@@ -4,7 +4,7 @@ namespace Project
     using Unity.Netcode;
     using UnityEngine;
 
-    public class Player : NetworkBehaviour
+    public class NetworkPlayer : NetworkBehaviour, IPlayer
     {
         private const float InterpolationDelay = 0.1f;
 
@@ -95,7 +95,7 @@ namespace Project
         {
             _ownerRegistry = _context.Resolve<OwnerPlayerRegistry>();
             _ownerRegistry.Add(this);
-            _context.Resolve<CameraFollowHandler>().Teleport();
+            _context.Resolve<CameraFollower>().Teleport();
             _context.Resolve<PlayerHealthBar>().SetTarget(_tank.Health);
         } 
 

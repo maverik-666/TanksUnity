@@ -9,12 +9,12 @@ namespace Project
         [SerializeField]
         private float _recoil = 3f;
 
-        private ProjectileFactory _projectileFactory = null;
+        private IProjectileFactory _projectileFactory = null;
         private bool _isInitialized = false;
         
         public void Init()
         {
-            _projectileFactory = this.Resolve<ProjectileFactory>();
+            _projectileFactory = this.Resolve<IProjectileFactory>();
             _isInitialized = true;
         }
 

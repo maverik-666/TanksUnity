@@ -8,12 +8,12 @@ namespace Project
     {
         private Camera _camera = null;
         private InputUpdateHandler _inputUpdateHandler = null;
-        private Registry<Player> _playerRegistry = null;
+        private OwnerPlayerRegistry _playerRegistry = null;
         private bool _isInitialized = false;
 
         public bool Enabled => enabled;
         
-        public void Init(InputUpdateHandler inputUpdateHandler, Camera camera, Registry<Player> playerRegistry)
+        public void Init(InputUpdateHandler inputUpdateHandler, Camera camera, OwnerPlayerRegistry playerRegistry)
         {
             _inputUpdateHandler = inputUpdateHandler;
             _camera = camera;
