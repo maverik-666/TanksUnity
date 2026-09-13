@@ -7,6 +7,9 @@ namespace Project
     [RequireComponent(typeof(Transform))]
     public class CameraBoundsUpdateHandler : MonoBehaviour, IUpdateHandler
     {
+        [SerializeField]
+        private float _maxOrthoSize = 5;
+        
         private Camera _camera = null;
         private Bounds _bounds;
         private bool _hasBounds = false;
@@ -32,6 +35,9 @@ namespace Project
             {
                 return;
             }
+
+            float delta = Mathf.Min(_bounds.size.x - _maxOrthoSize * _camera.aspect * 2, 0);
+            _camera.orthographicSize = Mathf.Max(_maxOrthoSize + delta/2, 1);
             
             float camHalfHeight = _camera.orthographicSize;
             float camHalfWidth = camHalfHeight * _camera.aspect;

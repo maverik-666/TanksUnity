@@ -26,9 +26,17 @@ namespace Project
             {
                 return;
             }
+
+            var tankPos = _playerRegistry.Items[0].TankPosition;
+            _pos = Vector2.Lerp(_pos, tankPos, 0.1f);
             
-            _pos = Vector2.Lerp(_pos, _playerRegistry.Items[0].TankPosition, 0.1f);
-            _camera.transform.position = Vector3.Lerp(_camera.transform.position, new Vector3(_pos.x, _pos.y, -10), 0.1f);
+            if (Mathf.Abs(_pos.x - tankPos.x) < 0.01f 
+                && Mathf.Abs(_pos.y - tankPos.y) < 0.01f)
+            {
+                _pos = tankPos;
+            }
+                
+            _camera.transform.position = new Vector3(_pos.x, _pos.y, -10);
         }
 
         public void Teleport()
