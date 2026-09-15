@@ -1,10 +1,11 @@
 namespace Project
 {
+    using System;
     using UnityEngine;
     
     public class MainMenuCompositionRoot : Context
     {
-        public void Awake()
+        private void Awake()
         {
             InitSelf(this);
             
@@ -68,6 +69,24 @@ namespace Project
             ownerPlayerRegistry.Add(player);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
+        }
+        
+        private async void Start()
+        {
+            try
+            {
+                await GetComponentInChildren<UnityServicesInitializer>().Init();
+
+                var activeSessionsController = GetComponentInChildren<ActiveSessionsController>(true);
+                var activeSessionsView = GetComponentInChildren<ActiveSessionsView>(true);
+
+                await activeSessionsController.Init();
+                activeSessionsView.Init(activeSessionsController);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e, this);
+            }
         }
     }
 }
