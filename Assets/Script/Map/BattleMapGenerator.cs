@@ -6,7 +6,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class BattleMapGenerator : MonoBehaviour
+    public class BattleMapGenerator : MonoBehaviour, IMap
     {
         [Header("Config")]
         [SerializeField]
@@ -33,7 +33,8 @@ namespace Project
         private SpawnPoint _spawnPf;
         
         private Dictionary<int, IContentFactory> _contentFactories = null;
-        private Vector2Int[] _occupied;
+        private SpawnPoint[] _spawnPoints = null;
+        private Vector2Int[] _occupied = null;
         
         private readonly Vector2Int[] _offsets = 
         {
@@ -47,16 +48,15 @@ namespace Project
             new Vector2Int(-1, 1),
         };
 
-        private Registry<SpawnPoint> _spawnPointRegistry = null; 
-        private CameraBoundsUpdateHandler _cameraBounds = null;
+        private Bounds _bounds;
         private bool _isInitialized = false;
 
         private Vector2Int Size => _config.Size;
         
-        public void Init(CameraBoundsUpdateHandler cameraBounds, Registry<SpawnPoint> spawnPointRegistry, params IContentFactory[] contentFactories)
+        public Bounds Bounds => _bounds;
+        
+        public void Init(params IContentFactory[] contentFactories)
         {
-            _spawnPointRegistry = spawnPointRegistry;
-            _cameraBounds = cameraBounds;
             _contentFactories = new Dictionary<int, IContentFactory>();
             foreach (var factory in contentFactories)
             {
@@ -66,11 +66,16 @@ namespace Project
             _isInitialized = true;
         }
         
+        public SpawnPoint GetSpawnPoint()
+        {
+            return _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+        }
+        
         public void Generate(int seed)
         {
             Random.InitState(seed);
             
-            SetupCameraBounds();
+            SetupBounds();
             
             GenerateBorders();
             GenerateFloorAndWalls();
@@ -80,10 +85,9 @@ namespace Project
             GenerateContent();
         }
 
-        private void SetupCameraBounds()
+        private void SetupBounds()
         {
-            var bounds = new Bounds(_floorTilemap.layoutGrid.transform.position + new Vector3(Size.x/2f, Size.y/2f), (Vector2) Size);
-            _cameraBounds.SetBounds(bounds);
+            _bounds = new Bounds(_floorTilemap.layoutGrid.transform.position + new Vector3(Size.x/2f, Size.y/2f),  Size + Vector2.one);
         }
         
         private void GenerateBorders()
@@ -117,6 +121,7 @@ namespace Project
         
         private void GenerateSpawns()
         {
+            _spawnPoints = new SpawnPoint[_config.SpawnCount];
             _occupied = new Vector2Int[_config.SpawnCount];
             
             for (int i = 0; i < _occupied.Length; i++)
@@ -131,7 +136,7 @@ namespace Project
                 
                 _occupied[i] = spawnPos;
                 var spawnPoint = Instantiate(_spawnPf, CalcWorldPosFor(spawnPos), Quaternion.identity, transform);
-                _spawnPointRegistry.Add(spawnPoint);
+                _spawnPoints[i] = spawnPoint;
             }
         }
 
@@ -206,7 +211,12 @@ namespace Project
         private Vector2 CalcWorldPosFor(int x, int y)
         {
             return _floorTilemap.GetCellCenterWorld(new Vector3Int(x, y, 0));
-        } 
+        }
+
+        public void Clear()
+        {
+            
+        }
 
 #if UNITY_EDITOR
         private void Start()

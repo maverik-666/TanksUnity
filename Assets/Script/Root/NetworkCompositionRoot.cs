@@ -20,9 +20,6 @@ namespace Project
                 
             var allTankRegistry = new AllTankRegistry();
             Bind(allTankRegistry);
-
-            var spawnPointRegistry = new Registry<SpawnPoint>(20);
-            Bind(spawnPointRegistry);
             
             var damageableRegistry = new IndexedRegistry<IDamageable>(500);
             Bind(damageableRegistry);
@@ -75,6 +72,9 @@ namespace Project
 
             var mapGenerator = GetComponentInChildren<BattleMapGenerator>(true);
             var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
+
+            var presetMap = GetComponentInChildren<PresetMap>(true);
+            presetMap.Init();
             
             var boxFactory = GetComponentInChildren<BoxFactory>(true);
             var gasolineFactory = GetComponentInChildren<GasolineFactory>(true);
@@ -86,7 +86,7 @@ namespace Project
             gasolineFactory.Init(destructibleRegistrator);
             bushFactory.Init();
             
-            mapGenerator.Init(cameraBoundsUpdateHandler, spawnPointRegistry, boxFactory, gasolineFactory, bushFactory);
+            mapGenerator.Init(boxFactory, gasolineFactory, bushFactory);
             mapGenerator.Generate(0);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);

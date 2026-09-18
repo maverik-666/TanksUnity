@@ -1,5 +1,6 @@
 namespace Project
 {
+    using System;
     using System.Collections.Generic;
     using Unity.Netcode;
     using UnityEngine;
@@ -42,8 +43,8 @@ namespace Project
 
             if (IsServer)
             {
-                var spawnPoint = _context.Resolve<Registry<SpawnPoint>>();
-                var position = spawnPoint.Items[Random.Range(0, spawnPoint.Items.Count)].Position; 
+                var activeMap = _context.Resolve<ActiveMapRegistry>();
+                var position = activeMap.Value.GetSpawnPoint().Position;  
                 _tank = tankFactory.Create(position);
                 _tankPosition.Value = position;
                 
@@ -83,7 +84,7 @@ namespace Project
         private void RegisterAsOwner()
         {
             _ownerRegistry = _context.Resolve<OwnerPlayerRegistry>();
-            _ownerRegistry.Add(this);
+            _ownerRegistry.Set(this);
             _context.Resolve<CameraFollower>().Teleport();
             _context.Resolve<PlayerHealthBar>().SetTarget(_tank.Health);
         } 
@@ -205,7 +206,7 @@ namespace Project
 
             if (IsOwner)
             {
-                _ownerRegistry.Remove(this);
+                _ownerRegistry.Unset(this);
             }
             
             _damageableRegistry.Remove(_tank);

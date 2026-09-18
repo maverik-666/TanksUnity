@@ -4,18 +4,21 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class PresetMap : MonoBehaviour
+    public class PresetMap : MonoBehaviour, IMap
     {
+        private SpawnPoint[] _spawnPoints;
+        private Bounds _bounds;
         private bool _isInitialized = false;
+        
+        public Bounds Bounds => _bounds;
 
-        public void Init(CameraBoundsUpdateHandler cameraBounds, Registry<SpawnPoint> spawnPointRegistry)
+        public void Init()
         {
             var border = GetComponentInChildren<EdgeCollider2D>();
-            var bounds = border.bounds;
-            bounds.size += Vector3.one;
-            cameraBounds.SetBounds(bounds);
-            
-            spawnPointRegistry.AddRange(GetComponentsInChildren<SpawnPoint>(true));
+            _bounds = border.bounds;
+            _bounds.size += Vector3.one;
+
+            _spawnPoints = GetComponentsInChildren<SpawnPoint>(true);
             
             foreach (var destructible in GetComponentsInChildren<Destructible>(true))
             {
@@ -28,6 +31,11 @@ namespace Project
             }
             
             _isInitialized = true;
+        }
+        
+        public SpawnPoint GetSpawnPoint()
+        {
+            return _spawnPoints[Random.Range(0, _spawnPoints.Length)];
         }
 
 #if UNITY_EDITOR

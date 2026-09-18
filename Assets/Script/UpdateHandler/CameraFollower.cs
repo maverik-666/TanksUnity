@@ -22,12 +22,12 @@ namespace Project
         
         public void FixedUpdate()
         {
-            if (_playerRegistry.Count == 0)
+            if (!_playerRegistry.HasValue)
             {
                 return;
             }
 
-            var tankPos = _playerRegistry.Items[0].TankPosition;
+            var tankPos = _playerRegistry.Value.TankPosition;
             _pos = Vector2.Lerp(_pos, tankPos, 0.1f);
             
             if (Mathf.Abs(_pos.x - tankPos.x) < 0.01f 
@@ -41,7 +41,7 @@ namespace Project
 
         public void Teleport()
         {
-            _pos = _playerRegistry.Items[0].TankPosition;
+            _pos = _playerRegistry.Value.TankPosition;
         } 
         
 #if UNITY_EDITOR

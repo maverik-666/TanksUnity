@@ -1,9 +1,7 @@
 namespace Project
 {
-    public class OwnerPlayerRegistry : Registry<IPlayer>
+    public class OwnerPlayerRegistry : SingleRegistry<IPlayer>
     {
-        public OwnerPlayerRegistry() : base(1)
-        {
-        }
+        
     }
 }

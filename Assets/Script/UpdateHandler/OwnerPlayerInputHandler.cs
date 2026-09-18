@@ -25,39 +25,28 @@ namespace Project
         
         public void UpdateTick(float deltaTime)
         {
-            if (_playerRegistry.Count == 0)
+            if (_playerRegistry.HasValue)
             {
-                return;
+                Move(deltaTime);
+                Rotate(deltaTime);
             }
-            
-            Move(deltaTime);
-            Rotate(deltaTime);
         }
 
         private void Move(float deltaTime)
         {
-            foreach (var player in _playerRegistry.Items)
-            { 
-                player.Move(_inputUpdateHandler.MoveInput, deltaTime);
-            }
+            _playerRegistry.Value.Move(_inputUpdateHandler.MoveInput, deltaTime);
         }
 
         private void Rotate(float deltaTime)
         {
             var mousePosition = _camera.ScreenToWorldPoint(_inputUpdateHandler.MouseScreenPosition);
             
-            foreach (var player in _playerRegistry.Items)
-            { 
-                player.Rotate(mousePosition, deltaTime);
-            }
+            _playerRegistry.Value.Rotate(mousePosition, deltaTime);
         }
 
         private void Shoot()
         {
-            foreach (var player in _playerRegistry.Items)
-            { 
-                player.Shoot();
-            }
+            _playerRegistry.Value.Shoot();
         }
 
         private void OnDestroy()

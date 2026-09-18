@@ -57,14 +57,17 @@ namespace Project
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init(projectileFactory);
 
-            GetComponentInChildren<PresetMap>(true).Init(cameraBoundsUpdateHandler, spawnPointRegistry);
-                            
+            var presetMap = GetComponentInChildren<PresetMap>(true);
+            
+            presetMap.Init();
+            cameraBoundsUpdateHandler.SetBounds(presetMap.Bounds);
+            
             var tankFactory = GetComponentInChildren<TankFactory>(true);
             var player = GetComponentInChildren<LocalPlayer>();
 
             tankFactory.Init();
             player.Init(tankFactory.Create(spawnPointRegistry.Items[0].Position));
-            ownerPlayerRegistry.Add(player);
+            ownerPlayerRegistry.Set(player);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
         }
