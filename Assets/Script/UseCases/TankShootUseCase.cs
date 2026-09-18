@@ -12,9 +12,9 @@ namespace Project
         private IProjectileFactory _projectileFactory = null;
         private bool _isInitialized = false;
         
-        public void Init()
+        public void Init(IProjectileFactory projectileFactory)
         {
-            _projectileFactory = this.Resolve<IProjectileFactory>();
+            _projectileFactory = projectileFactory;
             _isInitialized = true;
         }
 

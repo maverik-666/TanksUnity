@@ -32,26 +32,20 @@ namespace Project
 
         public override void OnNetworkSpawn()
         {
-            _context = CompositionRoot.Instance;
+            _context = NetworkCompositionRoot.Instance;
 
             var tankFactory = _context.Resolve<TankFactory>();
-            var spawnPoint = _context.Resolve<Registry<SpawnPoint>>();
-            var position = spawnPoint.Items[Random.Range(0, spawnPoint.Items.Count)].Position;
-
             int id = (int)NetworkObjectId + 10000;
-            _tank = tankFactory.Create(position);
             
             _damageableRegistry = _context.Resolve<IndexedRegistry<IDamageable>>();
-            _damageableRegistry.Add(id, _tank);
-            
             _allTankRegistry = _context.Resolve<AllTankRegistry>();
-            _allTankRegistry.Add(id, _tank);
 
             if (IsServer)
             {
+                var spawnPoint = _context.Resolve<Registry<SpawnPoint>>();
+                var position = spawnPoint.Items[Random.Range(0, spawnPoint.Items.Count)].Position; 
+                _tank = tankFactory.Create(position);
                 _tankPosition.Value = position;
-                
-                RegisterTankRpc(position);
                 
                 if (IsOwner)
                 {
@@ -60,13 +54,20 @@ namespace Project
             }
             else
             {
-                _tank.gameObject.SetActive(false);
-            }
+                _tank = tankFactory.Create(_tankPosition.Value);
 
-            if (!IsOwner)
-            {
-                _tankPosition.OnValueChanged += OnSnapshotReceived;
+                if (IsOwner)
+                {
+                    RegisterAsOwner();
+                }
+                else
+                {
+                    _tankPosition.OnValueChanged += OnSnapshotReceived;
+                }
             }
+            
+            _damageableRegistry.Add(id, _tank); 
+            _allTankRegistry.Add(id, _tank);
         }
 
         private void OnSnapshotReceived(Vector2 prev, Vector2 next)
@@ -77,18 +78,6 @@ namespace Project
                 TankRotation = _tankRotation.Value,
                 Timestamp = Time.time
             });
-        }
-
-        [Rpc(SendTo.NotServer)]
-        private void RegisterTankRpc(Vector3 position)
-        { 
-            _tank.transform.position = position;
-            _tank.gameObject.SetActive(true);
-
-            if (IsOwner)
-            {
-                RegisterAsOwner();
-            }
         }
         
         private void RegisterAsOwner()

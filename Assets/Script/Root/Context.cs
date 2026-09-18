@@ -6,10 +6,6 @@ namespace Project
 
     public abstract class Context : MonoBehaviour
     {
-        private static Context _instance = null;
-        
-        public static Context Instance => _instance;
-        
 #pragma warning disable IDE0090
         private readonly Dictionary<Type, object> _bindings = new Dictionary<Type, object>();
 #pragma warning restore IDE0090
@@ -48,11 +44,6 @@ namespace Project
 
             _bindings[typeof(T)] = child;
             return child;
-        }
-
-        protected void InitSelf(Context self)
-        {
-            _instance = self;
         }
         
         protected virtual void Bind<T>(T obj)

@@ -5,7 +5,7 @@ namespace Project
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Transform))]
-    public class SessionButton : MonoBehaviour, IInteractable
+    public class ClientSessionButton : MonoBehaviour, IInteractable
     {
         private string _sessionId = string.Empty;
         private Action<string> _callback = null;
@@ -39,7 +39,7 @@ namespace Project
         {
             if (!_isInitialized)
             {
-                Debug.LogError($"{nameof(SessionButton)} not initialized", this);
+                Debug.LogError($"{nameof(ClientSessionButton)} not initialized", this);
             }
         }
 #endif

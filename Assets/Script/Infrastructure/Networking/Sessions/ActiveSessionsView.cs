@@ -13,56 +13,45 @@ namespace Project
         private Transform _sessionButtonSpawnPoint = null;
         
         [SerializeField]
-        private SessionButton _sessionButtonPf = null;
+        private ClientSessionButton _sessionButtonPf = null;
+
+        private SessionConnector _sessionConnector = null;
+        private ActiveSessionsProvider _activeSessionsProvider = null;
+        private Dictionary<string, ClientSessionButton> _sessionButtons = null;
         
-        private ActiveSessionsController _activeSessionsController = null;
-        private Dictionary<string, SessionButton> _sessionButtons = null;
-        
-        private bool _isInitialized = false;
 
-        public void Init(ActiveSessionsController activeSessionsController)
+        public void Init(ActiveSessionsProvider activeSessionsProvider, SessionConnector sessionConnector)
         {
-            _sessionButtons = new Dictionary<string, SessionButton>();
+            _sessionButtons = new Dictionary<string, ClientSessionButton>();
 
-            _activeSessionsController = activeSessionsController;
-            _activeSessionsController.SessionAdded += CreateSessionButtonFor;
-            _activeSessionsController.SessionStateUpdated += UpdateSessionButtonOf;
-            _activeSessionsController.SessionRemoved += RemoveSessionButtonFor;
-
-            ShowActiveSessions();
-            
-            _isInitialized = true;
-        }
-
-        private void ShowActiveSessions()
-        {
-            foreach (var session in _activeSessionsController.ActiveSessions)
-            {
-                CreateSessionButtonFor(session);
-            }
+            _sessionConnector = sessionConnector;
+            _activeSessionsProvider = activeSessionsProvider;
+            _activeSessionsProvider.SessionAdded += CreateSessionButtonFor;
+            _activeSessionsProvider.SessionStateUpdated += UpdateSessionButtonOf;
+            _activeSessionsProvider.SessionRemoved += RemoveSessionButtonFor;
         }
         
-        private void CreateSessionButtonFor(ISession session)
+        private void CreateSessionButtonFor(ISessionInfo session, GameState gameState)
         {
             var sessionButton = Instantiate(_sessionButtonPf, _sessionButtonSpawnPoint.position, Quaternion.identity, transform);
-            sessionButton.Init(TryJoin, session.Id, session.Name, _activeSessionsController.GetGameStateOf(session.Id));
+            sessionButton.Init(TryJoin, session.Id, session.Name, gameState);
             
             _sessionButtons[session.Id] = sessionButton;
         }
         
         private void TryJoin(string sessionId)
         {
-            Debug.Log($"Try Joining {sessionId}");
+            _sessionConnector.RequestClient(sessionId);
         }
         
-        private void UpdateSessionButtonOf(ISession session, GameState gameState)
+        private void UpdateSessionButtonOf(string sessionId, GameState gameState)
         {
-            _sessionButtons[session.Id].UpdateState(gameState);
+            _sessionButtons[sessionId].UpdateState(gameState);
         }
         
-        private void RemoveSessionButtonFor(ISession session)
+        private void RemoveSessionButtonFor(string sessionId)
         {
-            if (_sessionButtons.TryGetValue(session.Id, out var button))
+            if (_sessionButtons.TryGetValue(sessionId, out var button))
             {
                 Destroy(button);
             }
@@ -70,23 +59,13 @@ namespace Project
         
         private void OnDestroy()
         {
-            if (_activeSessionsController != null)
+            if (_activeSessionsProvider != null)
             {
-                _activeSessionsController.SessionAdded -= CreateSessionButtonFor;
-                _activeSessionsController.SessionStateUpdated -= UpdateSessionButtonOf;
-                _activeSessionsController.SessionRemoved -= RemoveSessionButtonFor;
+                _activeSessionsProvider.SessionAdded -= CreateSessionButtonFor;
+                _activeSessionsProvider.SessionStateUpdated -= UpdateSessionButtonOf;
+                _activeSessionsProvider.SessionRemoved -= RemoveSessionButtonFor;
                 
             }
         }
-
-#if UNITY_EDITOR
-        private void Start()
-        {
-            if (!_isInitialized)
-            {
-                Debug.LogError($"{nameof(ActiveSessionsView)} not initialized", this);
-            }
-        }
-#endif
     }
 }

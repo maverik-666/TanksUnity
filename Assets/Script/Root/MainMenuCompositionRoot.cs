@@ -7,8 +7,6 @@ namespace Project
     {
         private void Awake()
         {
-            InitSelf(this);
-            
             var updateHandlerRegistry = new Registry<IUpdateHandler>(20);
             Bind(updateHandlerRegistry);
             
@@ -57,7 +55,7 @@ namespace Project
             
             GetComponentInChildren<TurretAimUseCase>(true).Init();
             GetComponentInChildren<TankMovementUseCase>(true).Init();
-            GetComponentInChildren<TankShootUseCase>(true).Init();
+            GetComponentInChildren<TankShootUseCase>(true).Init(projectileFactory);
 
             GetComponentInChildren<PresetMap>(true).Init(cameraBoundsUpdateHandler, spawnPointRegistry);
                             
@@ -77,15 +75,19 @@ namespace Project
             {
                 await GetComponentInChildren<UnityServicesInitializer>().Init();
 
-                var activeSessionsController = GetComponentInChildren<ActiveSessionsController>(true);
+                var sessionConnector = GetComponentInChildren<SessionConnector>(true);
+                var hostSessionButton = GetComponentInChildren<HostSessionButton>(true);
+                var activeSessionsController = GetComponentInChildren<ActiveSessionsProvider>(true);
                 var activeSessionsView = GetComponentInChildren<ActiveSessionsView>(true);
 
-                await activeSessionsController.Init();
-                activeSessionsView.Init(activeSessionsController);
+                sessionConnector.Init();
+                hostSessionButton.Init(sessionConnector);
+                activeSessionsController.Init();
+                activeSessionsView.Init(activeSessionsController, sessionConnector);
             }
             catch (Exception e)
             {
-                Debug.LogError(e, this);
+                Debug.LogError(e.StackTrace, this);
             }
         }
     }

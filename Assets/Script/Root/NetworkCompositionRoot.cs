@@ -2,11 +2,15 @@ namespace Project
 {
     using UnityEngine;
     
-    public class CompositionRoot : Context
+    public class NetworkCompositionRoot : Context
     {
+        private static Context _instance = null;
+        
+        public static Context Instance => _instance;
+        
         public void Awake()
         {
-            InitSelf(this);
+            _instance = this;
             
             var updateHandlerRegistry = new Registry<IUpdateHandler>(20);
             Bind(updateHandlerRegistry);
@@ -67,7 +71,7 @@ namespace Project
             
             GetComponentInChildren<TurretAimUseCase>(true).Init();
             GetComponentInChildren<TankMovementUseCase>(true).Init();
-            GetComponentInChildren<TankShootUseCase>(true).Init();
+            GetComponentInChildren<TankShootUseCase>(true).Init(projectileFactory);
 
             var mapGenerator = GetComponentInChildren<BattleMapGenerator>(true);
             var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
@@ -86,6 +90,8 @@ namespace Project
             mapGenerator.Generate(0);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
+            
+            _ = SessionConnector.Instance.FulfillRequest();
         }
     }
 }
