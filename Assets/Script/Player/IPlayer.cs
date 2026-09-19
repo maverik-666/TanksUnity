@@ -14,6 +14,8 @@ namespace Project
         
         void Teleport(Vector2 targetPosition);
 
+        void Revive();
+
         public PlayerPermissions Permissions { get; }
     }
 }

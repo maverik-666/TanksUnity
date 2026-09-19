@@ -41,6 +41,11 @@ namespace Project
             _tank.transform.position = targetPosition;
             _tank.gameObject.SetActive(true);
         }
+        
+        public void Revive()
+        {
+            _tank.Revive();
+        }
 
 #if UNITY_EDITOR
         private void Start()

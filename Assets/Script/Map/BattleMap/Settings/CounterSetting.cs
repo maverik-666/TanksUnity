@@ -36,10 +36,13 @@ namespace Project
 
         public int Value => _value;
 
-        public void Init()
+        public void Init(InteractableRegistrator interactableRegistrator)
         {
             _upButton.Init(this);
             _downButton.Init(this);
+            
+            interactableRegistrator.Register(_upButton);
+            interactableRegistrator.Register(_downButton);
 
             _value = _initialValue;
             

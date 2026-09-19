@@ -12,7 +12,10 @@ namespace Project
             
             var ownerPlayerRegistry = new OwnerPlayerRegistry();
             Bind(ownerPlayerRegistry);
-                
+            
+            var interactableRegistry = new IndexedRegistry<IInteractable>(500);
+            Bind(interactableRegistry);
+            
             var camera = GetComponentInChildren<Camera>(true);
             var cameraFollowHandler = GetComponentInChildren<CameraFollower>(true);
             cameraFollowHandler.Init(camera, ownerPlayerRegistry);
@@ -54,9 +57,10 @@ namespace Project
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init(projectileFactory);
 
+            var interactableRegistrator = new InteractableRegistrator(interactableRegistry);
             var presetMap = GetComponentInChildren<PresetMap>(true);
             
-            presetMap.Init();
+            presetMap.Init(interactableRegistrator);
             cameraBoundsUpdateHandler.SetBounds(presetMap.Bounds);
             
             var tankFactory = GetComponentInChildren<TankFactory>(true);

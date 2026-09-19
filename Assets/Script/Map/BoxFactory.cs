@@ -14,34 +14,33 @@ namespace Project
         private Destructible _boxPf = null;
 
         private List<Destructible> _boxes = null;
-        private DestructibleRegistrator _destructibleRegistrator = null;
+        private InteractableRegistrator _interactableRegistrator = null;
         private bool _isInitialized = false;
         
         public MapContentId ContentId => _contentId;
         
-        public void Init(DestructibleRegistrator destructibleRegistrator)
+        public void Init(InteractableRegistrator interactableRegistrator)
         {
             _boxes = new List<Destructible>();
-            _destructibleRegistrator = destructibleRegistrator;
+            _interactableRegistrator = interactableRegistrator;
             _isInitialized = true;
         }
         
         public void CreateOn(Vector2 pos)
         {
             var box = Instantiate(_boxPf, pos, Quaternion.Euler(0,0, 90 * Random.Range(0, 4)), transform);
-            box.Init();
+            box.Init(_interactableRegistrator);
             
             _boxes.Add(box);
-            _destructibleRegistrator.Register(box);
         }
 
         public void ClearAll()
         {
             foreach (var box in _boxes)
             {
-                if (_destructibleRegistrator.HasDestructible(box))
+                if (_interactableRegistrator.HasDestructible(box))
                 {
-                    _destructibleRegistrator.Unregister(box);
+                    _interactableRegistrator.Unregister(box);
                     Destroy(box.gameObject);
                 }
             }

@@ -21,9 +21,6 @@ namespace Project
             var allTankRegistry = new AllTankRegistry();
             Bind(allTankRegistry);
             
-            var damageableRegistry = new IndexedRegistry<IDamageable>(500);
-            Bind(damageableRegistry);
-            
             var interactableRegistry = new IndexedRegistry<IInteractable>(500);
             Bind(interactableRegistry);
 
@@ -57,7 +54,7 @@ namespace Project
             timerUpdateHandler.Init();
             updateHandlerRegistry.Add(timerUpdateHandler);
             
-            GetComponentInChildren<NetworkDamageUseCase>(true).Init(damageableRegistry);
+            GetComponentInChildren<DamageUseCase>(true).Init();
             
             var vfxFactory = GetComponentInChildren<OneShotVFXFactory>(true);
             vfxFactory.Init();
@@ -73,36 +70,34 @@ namespace Project
             var projectileCollisionUseCase = GetComponentInChildren<NetworkProjectileInteractUseCase>(true);
 
             projectileFactory.Init(projectileRegistry, indexedProjectileRegistry, allTankRegistry);
-            projectileCollisionUseCase.Init(indexedProjectileRegistry, projectileFactory, vfxFactory);
+            projectileCollisionUseCase.Init(indexedProjectileRegistry, interactableRegistry, projectileFactory, vfxFactory);
             
             GetComponentInChildren<TurretAimUseCase>(true).Init();
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init(projectileFactory);
 
-            var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
+            var interactableRegistrator = new InteractableRegistrator(interactableRegistry);
             
             var boxFactory = GetComponentInChildren<BoxFactory>(true);
             var gasolineFactory = GetComponentInChildren<GasolineFactory>(true);
             var bushFactory = GetComponentInChildren<BushFactory>(true);
             
-            destructibleRegistrator.Init(damageableRegistry);
-            
-            boxFactory.Init(destructibleRegistrator);
-            gasolineFactory.Init(destructibleRegistrator);
+            boxFactory.Init(interactableRegistrator);
+            gasolineFactory.Init(interactableRegistrator);
             bushFactory.Init();
 
             var mapConfigProvider = GetComponentInChildren<BattleMapConfigProvider>(true);
             var mapGenerator = GetComponentInChildren<BattleMapGenerator>(true);
 
             mapGenerator.Init(boxFactory, gasolineFactory, bushFactory);
-            mapConfigProvider.Init(playerRegistry);
+            mapConfigProvider.Init(playerRegistry, interactableRegistrator);
             
             var presetMap = GetComponentInChildren<PresetMap>(true);
-            presetMap.Init();
+            presetMap.Init(interactableRegistrator);
             activeMapRegistry.Set(presetMap);
             
             var battleCreator = GetComponentInChildren<BattleCreator>(true);
-            battleCreator.Init(cameraBoundsUpdateHandler, playerRegistry, presetMap, destructibleRegistrator, mapGenerator, mapConfigProvider);
+            battleCreator.Init(cameraBoundsUpdateHandler, playerRegistry, presetMap, interactableRegistrator, mapGenerator, mapConfigProvider);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
 

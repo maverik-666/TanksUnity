@@ -1,5 +1,6 @@
 namespace Project
 {
+    using System;
     using Unity.Netcode;
     using UnityEngine;
 
@@ -11,25 +12,30 @@ namespace Project
         private PresetMap _lobbyMap = null;
         private PlayerRegistry _playerRegistry = null;
 
-        private DestructibleRegistrator _destructibleRegistrator = null;
         private BattleMapGenerator _battleMapGenerator = null;
         private BattleMapConfigProvider _battleMapConfigProvider = null;
         private PlayBattleButton _playBattleButton = null;
         private bool _isInitialized = false;
 
-        public void Init(CameraBoundsUpdateHandler cameraBounds, PlayerRegistry playerRegistry, PresetMap lobbyMap, DestructibleRegistrator destructibleRegistrator, BattleMapGenerator battleMapGenerator, BattleMapConfigProvider battleMapConfigProvider)
+        public void Init(
+            CameraBoundsUpdateHandler cameraBounds,
+            PlayerRegistry playerRegistry,
+            PresetMap lobbyMap,
+            InteractableRegistrator interactableRegistrator,
+            BattleMapGenerator battleMapGenerator,
+            BattleMapConfigProvider battleMapConfigProvider)
         {
             _cameraBounds = cameraBounds;
             _lobbyMap = lobbyMap;
             _playerRegistry = playerRegistry;
             
-            _destructibleRegistrator = destructibleRegistrator;
             _battleMapGenerator = battleMapGenerator;
             _battleMapConfigProvider = battleMapConfigProvider;
 
             _playBattleButton = GetComponentInChildren<PlayBattleButton>();
             _playBattleButton.Init(this);
-
+            interactableRegistrator.Register(_playBattleButton);
+            
             _cameraBounds.SetBounds(_lobbyMap.Bounds);
             
             _isInitialized = true;
@@ -37,8 +43,6 @@ namespace Project
 
         public void StartBattle()
         {
-            _destructibleRegistrator.ResetCounter();
-            
             var config = _battleMapConfigProvider.GetBattleMapConfig();
             _battleMapGenerator.Generate(config, 0);
             _cameraBounds.SetBounds(_battleMapGenerator.Bounds);
@@ -55,12 +59,23 @@ namespace Project
         [Rpc(SendTo.NotServer)]
         private void StartBattleRpc(BattleMapConfig config)
         {
-            _destructibleRegistrator.ResetCounter();
             _battleMapGenerator.Generate(config, 0);
             _cameraBounds.SetBounds(_battleMapGenerator.Bounds);
+            
+            for (int i = 0; i < _playerRegistry.Count; i++)
+            {
+                _playerRegistry.Items[i].Revive();
+            }
         }
 
-        [ContextMenu("Aboba")]
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, 10, 100, 100), "Leave"))
+            {
+                EndBattle();
+            }
+        }
+
         public void EndBattle()
         {
             _cameraBounds.SetBounds(_lobbyMap.Bounds);

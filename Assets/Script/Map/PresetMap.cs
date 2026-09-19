@@ -15,7 +15,7 @@ namespace Project
 
         public IReadOnlyList<SpawnPoint> SpawnPoints => _spawnPoints;
 
-        public void Init()
+        public void Init(InteractableRegistrator interactableRegistrator)
         {
             var border = GetComponentInChildren<EdgeCollider2D>();
             _bounds = border.bounds;
@@ -25,7 +25,7 @@ namespace Project
             
             foreach (var destructible in GetComponentsInChildren<Destructible>(true))
             {
-                destructible.Init();
+                destructible.Init(interactableRegistrator);
             }
             
             foreach (var bush in GetComponentsInChildren<Bush>(true))

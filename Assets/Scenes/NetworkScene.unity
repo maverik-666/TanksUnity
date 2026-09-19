@@ -510,7 +510,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1020856691}
   - {fileID: 890973374}
   - {fileID: 2111663356}
   - {fileID: 410540298}
@@ -828,50 +827,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1020856690
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1020856691}
-  - component: {fileID: 1020856692}
-  m_Layer: 0
-  m_Name: Destructible Registrator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1020856691
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020856690}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 700161233}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1020856692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020856690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b6f47aa9e5f4927b264cbebb81b71ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.DestructibleRegistrator
 --- !u!1 &1050682435
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,7 +1056,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1397271625}
   - component: {fileID: 1397271626}
-  - component: {fileID: 1397271627}
   - component: {fileID: 1397271628}
   m_Layer: 0
   m_Name: Network UseCases
@@ -1152,19 +1106,6 @@ MonoBehaviour:
   AutoObjectParentSync: 0
   SyncOwnerTransformWhenParented: 0
   AllowOwnerToParent: 0
---- !u!114 &1397271627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1397271624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83ea4583e6eb4ae18fe146a154d0331a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.NetworkDamageUseCase
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &1397271628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1630,6 +1571,7 @@ GameObject:
   - component: {fileID: 2061321453}
   - component: {fileID: 2061321452}
   - component: {fileID: 2061321451}
+  - component: {fileID: 2061321454}
   m_Layer: 0
   m_Name: --- USECASES ---
   m_TagString: Untagged
@@ -1690,6 +1632,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efae1fd88d633b341aaf07e766fdbc2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.HullMovementUseCase
+--- !u!114 &2061321454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061321449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e941d2fa5f946c08b1966cf8c245237, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Project.DamageUseCase
 --- !u!1 &2111663355
 GameObject:
   m_ObjectHideFlags: 0

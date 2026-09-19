@@ -21,7 +21,7 @@ namespace Project
         private OwnerPlayerRegistry _ownerRegistry = null;
         private PlayerPermissions _permissions = PlayerPermissions.Restricted;
         
-        private IndexedRegistry<IDamageable> _damageableRegistry = null;
+        private IndexedRegistry<IInteractable> _interactableRegistry = null;
         private AllTankRegistry _allTankRegistry = null;
         private PlayerRegistry _playerRegistry = null;
 
@@ -42,7 +42,7 @@ namespace Project
             var tankFactory = _context.Resolve<TankFactory>();
             int id = (int)NetworkObjectId + 10000;
             
-            _damageableRegistry = _context.Resolve<IndexedRegistry<IDamageable>>();
+            _interactableRegistry = _context.Resolve<IndexedRegistry<IInteractable>>();
             _allTankRegistry = _context.Resolve<AllTankRegistry>();
             _playerRegistry = _context.Resolve<PlayerRegistry>();
             
@@ -78,7 +78,7 @@ namespace Project
                 }
             }
             
-            _damageableRegistry.Add(id, _tank); 
+            _interactableRegistry.Add(id, _tank); 
             _allTankRegistry.Add(id, _tank);
             _playerRegistry.Add(this);
         }
@@ -169,12 +169,13 @@ namespace Project
         
         public void Teleport(Vector2 targetPosition)
         {
+            _snapshots.Clear();
             _tank.gameObject.SetActive(false);
+            _tankPosition.Value = targetPosition;
             _tank.transform.position = targetPosition;
             _tank.gameObject.SetActive(true);
         
             TeleportRpc(targetPosition);
-            _tankPosition.Value = targetPosition;
         }
         
         [Rpc(SendTo.NotServer)]
@@ -183,6 +184,11 @@ namespace Project
             _tank.gameObject.SetActive(false);
             _tank.transform.position = targetPosition;
             _tank.gameObject.SetActive(true);
+        }
+
+        public void Revive()
+        {
+            _tank.Revive();
         }
 
         private void Update()
@@ -239,7 +245,7 @@ namespace Project
                 _ownerRegistry.Unset(this);
             }
             
-            _damageableRegistry.Remove(_tank);
+            _interactableRegistry.Remove(_tank);
             _allTankRegistry.Remove(_tank);
             _playerRegistry.Remove(this);
 

@@ -19,13 +19,14 @@ namespace Project
         private PlayerRegistry _playerRegistry = null;
         private bool _isInitialized = false;
 
-        public void Init(PlayerRegistry playerRegistry)
+        public void Init(PlayerRegistry playerRegistry, InteractableRegistrator interactableRegistrator)
         {
-            _widthSetting.Init();
-            _heightSetting.Init();
+            _widthSetting.Init(interactableRegistrator);
+            _heightSetting.Init(interactableRegistrator);
+            
             foreach (var contentSetting in _contentSettings)
             {
-                contentSetting.Init();
+                contentSetting.Init(interactableRegistrator);
             }
             
             _playerRegistry = playerRegistry;
@@ -77,9 +78,9 @@ namespace Project
 
             public int Value => _counterSetting.Value;
 
-            public void Init()
+            public void Init(InteractableRegistrator interactableRegistrator)
             {
-                _counterSetting.Init();
+                _counterSetting.Init(interactableRegistrator);
             }
         }
     }

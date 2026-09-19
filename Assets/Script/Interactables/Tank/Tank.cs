@@ -117,6 +117,14 @@ namespace Project
                 destructibleStrategy.Destruct();
             }
         }
+
+        public void Revive()
+        {
+            _health.SetHealth(_health.Max);
+
+            _tankSkinRenderer.Brighten();
+            _tankSkinRenderer.Flash(_invincibilityDuration);
+        }
         
 #if UNITY_EDITOR
         private void Start()

@@ -14,33 +14,32 @@ namespace Project
         private Destructible _gasolinePf = null;
 
         private List<Destructible> _gasolines = null;
-        private DestructibleRegistrator _destructibleRegistrator = null;
+        private InteractableRegistrator _interactableRegistrator = null;
         private bool _isInitialized = false;
 
         public MapContentId ContentId => _contentId;
         
-        public void Init(DestructibleRegistrator destructibleRegistrator)
+        public void Init(InteractableRegistrator interactableRegistrator)
         {
             _gasolines = new List<Destructible>();
-            _destructibleRegistrator = destructibleRegistrator;
+            _interactableRegistrator = interactableRegistrator;
             _isInitialized = true;
         }
         
         public void CreateOn(Vector2 pos)
         {
             var gasoline = Instantiate(_gasolinePf, pos, Quaternion.Euler(0,0, 45 * Random.Range(0, 8)), transform);
-            gasoline.Init();
+            gasoline.Init(_interactableRegistrator);
             _gasolines.Add(gasoline);
-            _destructibleRegistrator.Register(gasoline);
         }
 
         public void ClearAll()
         {
             foreach (var gasoline in _gasolines)
             {
-                if (_destructibleRegistrator.HasDestructible(gasoline))
+                if (_interactableRegistrator.HasDestructible(gasoline))
                 {
-                    _destructibleRegistrator.Unregister(gasoline);
+                    _interactableRegistrator.Unregister(gasoline);
                     Destroy(gasoline.gameObject);
                 }
             }

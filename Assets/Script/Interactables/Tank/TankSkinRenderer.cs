@@ -50,6 +50,11 @@ namespace Project
         {
             Recolor(_dimColor, 1);
         }
+        
+        public void Brighten()
+        {
+            Recolor(Color.white, 1);
+        }
 
         public void Flash(float duration)
         {

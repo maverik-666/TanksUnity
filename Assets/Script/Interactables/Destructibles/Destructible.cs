@@ -19,6 +19,7 @@ namespace Project
 
         private Timer _invincibilityTimer = null;
         
+        private InteractableRegistrator _interactableRegistrator;
         private DestructibleStrategy[] _destructibleStrategies = null;
         private IDamageUseCase _damageUseCase = null;
         private DestructibleSkinRenderer _skinRenderer = null;
@@ -30,8 +31,10 @@ namespace Project
 
         public bool CanNotTakeDamage => _invincibilityTimer.IsRunning;
         
-        public void Init()
+        public void Init(InteractableRegistrator interactableRegistrator)
         {
+            _interactableRegistrator = interactableRegistrator;
+            
             _health = new Health(_initialHealth);
             _invincibilityTimer = new Timer(this.Resolve<TimerUpdateHandler>());
             
@@ -46,6 +49,7 @@ namespace Project
                 destructibleStrategy.Init(this);
             }
             
+            interactableRegistrator.Register(this);
             _isInitialized = true;
         }
         
@@ -67,6 +71,7 @@ namespace Project
                 destructibleStrategy.Destruct();
             }
             
+            _interactableRegistrator.Unregister(this);
             Destroy(gameObject);
         }
         
