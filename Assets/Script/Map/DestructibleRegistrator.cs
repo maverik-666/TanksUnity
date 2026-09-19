@@ -28,6 +28,16 @@ namespace Project
             _idCounter = 0;
         }
 
+        public void Unregister(IDamageable damageable)
+        {
+            _damageableRegistry.Remove(damageable);
+        }
+
+        public bool HasDestructible(IDamageable damageable)
+        {
+            return _damageableRegistry.HasItem(damageable);
+        }
+        
 #if UNITY_EDITOR
         private void Start()
         {

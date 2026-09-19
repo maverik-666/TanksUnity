@@ -7,6 +7,8 @@ namespace Project
         private readonly Dictionary<int, T> _byIds;
         private readonly Dictionary<T, int> _byItems;
         
+        public int Count => _byIds.Count;
+        
         public IndexedRegistry(int capacity)
         {
             _byIds = new Dictionary<int, T>(capacity);
@@ -33,6 +35,11 @@ namespace Project
         public int GetIdBy(T item)
         {
             return _byItems[item];
+        }
+
+        public bool HasItem(T item)
+        {
+            return _byItems.ContainsKey(item);
         }
     }
 }

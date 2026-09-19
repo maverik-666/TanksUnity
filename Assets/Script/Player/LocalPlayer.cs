@@ -11,6 +11,8 @@ namespace Project
 
         public Vector2 TankPosition => _tank.transform.position;
         
+        public PlayerPermissions Permissions => PlayerPermissions.All;
+        
         public void Init(Tank tank)
         {
             _tank = tank;
@@ -31,6 +33,13 @@ namespace Project
         public void Rotate(Vector2 targetPos, float deltaTime)
         {
             _tank.Rotate(targetPos, deltaTime);
+        }
+
+        public void Teleport(Vector2 targetPosition)
+        {
+            _tank.gameObject.SetActive(false);
+            _tank.transform.position = targetPosition;
+            _tank.gameObject.SetActive(true);
         }
 
 #if UNITY_EDITOR

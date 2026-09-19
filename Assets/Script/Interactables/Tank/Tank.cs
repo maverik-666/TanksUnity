@@ -26,6 +26,7 @@ namespace Project
         private TankSkinRenderer _tankSkinRenderer = null;
         private Turret _turret = null;
         private Rigidbody2D _rigidbody2D = null;
+        private IPlayer _player = null;
         
         private bool _isInitialized = false;
 
@@ -35,9 +36,10 @@ namespace Project
         
         public TankStats TankStats => _tankStats;
         public Turret Turret => _turret;
-
-        public bool CanShoot => Turret.CanShoot;
         
+        public IPlayer Player => _player; 
+        
+        public bool CanShoot => Turret.CanShoot;
         
         public Health Health => _health;
         
@@ -45,8 +47,9 @@ namespace Project
 
         public bool CanNotTakeDamage => _invincibilityTimer.IsRunning;
 
-        public void Init(TankStats tankStats)
+        public void Init(IPlayer player, TankStats tankStats)
         {
+            _player = player;
             _tankStats = tankStats;
             
             _health = new Health(_tankStats.Health);

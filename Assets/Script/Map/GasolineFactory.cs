@@ -1,5 +1,6 @@
 namespace Project
 {
+    using System.Collections.Generic;
     using UnityEngine;
 
     [DisallowMultipleComponent]
@@ -11,7 +12,8 @@ namespace Project
         
         [SerializeField]
         private Destructible _gasolinePf = null;
-        
+
+        private List<Destructible> _gasolines = null;
         private DestructibleRegistrator _destructibleRegistrator = null;
         private bool _isInitialized = false;
 
@@ -19,6 +21,7 @@ namespace Project
         
         public void Init(DestructibleRegistrator destructibleRegistrator)
         {
+            _gasolines = new List<Destructible>();
             _destructibleRegistrator = destructibleRegistrator;
             _isInitialized = true;
         }
@@ -27,7 +30,22 @@ namespace Project
         {
             var gasoline = Instantiate(_gasolinePf, pos, Quaternion.Euler(0,0, 45 * Random.Range(0, 8)), transform);
             gasoline.Init();
+            _gasolines.Add(gasoline);
             _destructibleRegistrator.Register(gasoline);
+        }
+
+        public void ClearAll()
+        {
+            foreach (var gasoline in _gasolines)
+            {
+                if (_destructibleRegistrator.HasDestructible(gasoline))
+                {
+                    _destructibleRegistrator.Unregister(gasoline);
+                    Destroy(gasoline.gameObject);
+                }
+            }
+
+            _gasolines.Clear();
         }
 
 #if UNITY_EDITOR

@@ -3,6 +3,8 @@ namespace Project
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Unity.Services.Authentication;
+    using Unity.Services.Core;
     using Unity.Services.Multiplayer;
     using UnityEngine;
     using UnityEngine.SceneManagement;
@@ -80,6 +82,26 @@ namespace Project
             }
             
             _pendingRequest = RequestType.None;
+        }
+        
+        public static async void HostInstant()
+        {
+            await UnityServices.InitializeAsync();
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            
+            Debug.Log($"Sighed in! MY id is: {AuthenticationService.Instance.PlayerId}");
+            
+            await MultiplayerService.Instance.CreateSessionAsync(new SessionOptions()
+            {
+                Name = "Aboba",
+                MaxPlayers = 4,
+                SessionProperties = new Dictionary<string, SessionProperty>()
+                {
+                    { "gameState", new SessionProperty("Wait") }
+                }
+            }.WithRelayNetwork());
+            
+            Debug.Log($"Hosting!");
         }
         
         private enum RequestType

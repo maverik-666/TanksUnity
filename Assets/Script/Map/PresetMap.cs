@@ -1,5 +1,6 @@
 namespace Project
 {
+    using System.Collections.Generic;
     using UnityEngine;
 
     [DisallowMultipleComponent]
@@ -11,6 +12,8 @@ namespace Project
         private bool _isInitialized = false;
         
         public Bounds Bounds => _bounds;
+
+        public IReadOnlyList<SpawnPoint> SpawnPoints => _spawnPoints;
 
         public void Init()
         {
@@ -31,11 +34,6 @@ namespace Project
             }
             
             _isInitialized = true;
-        }
-        
-        public SpawnPoint GetSpawnPoint()
-        {
-            return _spawnPoints[Random.Range(0, _spawnPoints.Length)];
         }
 
 #if UNITY_EDITOR

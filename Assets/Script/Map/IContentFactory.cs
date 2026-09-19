@@ -7,5 +7,7 @@ namespace Project
         public MapContentId ContentId { get; }
         
         public void CreateOn(Vector2 pos);
+
+        public void ClearAll();
     }
 }

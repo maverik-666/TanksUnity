@@ -1,9 +1,9 @@
 namespace Project
 {
-    using System;
     using System.Collections.Generic;
     using Unity.Netcode;
     using UnityEngine;
+    using Random = UnityEngine.Random;
 
     public class NetworkPlayer : NetworkBehaviour, IPlayer
     {
@@ -19,9 +19,11 @@ namespace Project
         private Context _context = null;
         private Tank _tank = null;
         private OwnerPlayerRegistry _ownerRegistry = null;
+        private PlayerPermissions _permissions = PlayerPermissions.Restricted;
         
         private IndexedRegistry<IDamageable> _damageableRegistry = null;
         private AllTankRegistry _allTankRegistry = null;
+        private PlayerRegistry _playerRegistry = null;
 
         private readonly NetworkVariable<Vector2> _tankPosition = new NetworkVariable<Vector2>();
         private readonly NetworkVariable<float> _tankRotation = new NetworkVariable<float>();
@@ -30,6 +32,8 @@ namespace Project
         private readonly Queue<Snapshot> _snapshots = new Queue<Snapshot>();
 
         public Vector2 TankPosition => _tank.Position;
+        
+        public PlayerPermissions Permissions => _permissions;
 
         public override void OnNetworkSpawn()
         {
@@ -40,22 +44,29 @@ namespace Project
             
             _damageableRegistry = _context.Resolve<IndexedRegistry<IDamageable>>();
             _allTankRegistry = _context.Resolve<AllTankRegistry>();
-
+            _playerRegistry = _context.Resolve<PlayerRegistry>();
+            
             if (IsServer)
             {
                 var activeMap = _context.Resolve<ActiveMapRegistry>();
-                var position = activeMap.Value.GetSpawnPoint().Position;  
-                _tank = tankFactory.Create(position);
+                var spawnPoints = activeMap.Value.SpawnPoints;
+                var position = spawnPoints[Random.Range(0, spawnPoints.Count)].Position;  
+                _tank = tankFactory.Create(this, position);
                 _tankPosition.Value = position;
                 
                 if (IsOwner)
                 {
                     RegisterAsOwner();
+
+                    if (IsHost)
+                    {
+                        _permissions = PlayerPermissions.All;
+                    }
                 }
             }
             else
             {
-                _tank = tankFactory.Create(_tankPosition.Value);
+                _tank = tankFactory.Create(this, _tankPosition.Value);
 
                 if (IsOwner)
                 {
@@ -69,6 +80,7 @@ namespace Project
             
             _damageableRegistry.Add(id, _tank); 
             _allTankRegistry.Add(id, _tank);
+            _playerRegistry.Add(this);
         }
 
         private void OnSnapshotReceived(Vector2 prev, Vector2 next)
@@ -143,7 +155,7 @@ namespace Project
             _tank.Rotate(targetPos, deltaTime);
             RotateRpc(targetPos, deltaTime);
         }
-
+        
         [Rpc(SendTo.Server)]
         private void RotateRpc(Vector2 targetPos, float deltaTime)
         {
@@ -153,6 +165,24 @@ namespace Project
             }
 
             _turretRotation.Value = _tank.Turret.Rotation.eulerAngles.z;
+        }
+        
+        public void Teleport(Vector2 targetPosition)
+        {
+            _tank.gameObject.SetActive(false);
+            _tank.transform.position = targetPosition;
+            _tank.gameObject.SetActive(true);
+        
+            TeleportRpc(targetPosition);
+            _tankPosition.Value = targetPosition;
+        }
+        
+        [Rpc(SendTo.NotServer)]
+        private void TeleportRpc(Vector2 targetPosition)
+        {
+            _tank.gameObject.SetActive(false);
+            _tank.transform.position = targetPosition;
+            _tank.gameObject.SetActive(true);
         }
 
         private void Update()
@@ -211,6 +241,7 @@ namespace Project
             
             _damageableRegistry.Remove(_tank);
             _allTankRegistry.Remove(_tank);
+            _playerRegistry.Remove(this);
 
             Destroy(_tank.gameObject);
 

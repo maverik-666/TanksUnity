@@ -11,5 +11,9 @@ namespace Project
         void Move(Vector2 input, float deltaTime);
         
         void Rotate(Vector2 targetPos, float deltaTime);
+        
+        void Teleport(Vector2 targetPosition);
+
+        public PlayerPermissions Permissions { get; }
     }
 }

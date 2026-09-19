@@ -8,9 +8,6 @@ namespace Project
     [RequireComponent(typeof(Transform))]
     public class BattleMapGenerator : MonoBehaviour, IMap
     {
-        [Header("Config")]
-        [SerializeField]
-        private BattleMapConfig _config;
         
         [Header("Tile maps")]
         [SerializeField]
@@ -32,7 +29,10 @@ namespace Project
         [SerializeField]
         private SpawnPoint _spawnPf;
         
+        private BattleMapConfig _config;
+        
         private Dictionary<int, IContentFactory> _contentFactories = null;
+        private EdgeCollider2D _wall = null;
         private SpawnPoint[] _spawnPoints = null;
         private Vector2Int[] _occupied = null;
         
@@ -49,11 +49,15 @@ namespace Project
         };
 
         private Bounds _bounds;
+
+        private bool _isClear = true;
         private bool _isInitialized = false;
 
         private Vector2Int Size => _config.Size;
         
         public Bounds Bounds => _bounds;
+
+        public IReadOnlyList<SpawnPoint> SpawnPoints => _spawnPoints;
         
         public void Init(params IContentFactory[] contentFactories)
         {
@@ -66,13 +70,15 @@ namespace Project
             _isInitialized = true;
         }
         
-        public SpawnPoint GetSpawnPoint()
+        public void Generate(BattleMapConfig config, int seed)
         {
-            return _spawnPoints[Random.Range(0, _spawnPoints.Length)];
-        }
-        
-        public void Generate(int seed)
-        {
+            if (!_isClear)
+            {
+                Clear();
+            }
+
+            _isClear = false;
+            _config = config;
             Random.InitState(seed);
             
             SetupBounds();
@@ -92,8 +98,8 @@ namespace Project
         
         private void GenerateBorders()
         {
-            var wall = Instantiate(_borderPf, Vector3.one * -0.5f, Quaternion.identity);
-            wall.points = new Vector2[]
+            _wall = Instantiate(_borderPf, Vector3.one * -0.5f, Quaternion.identity);
+            _wall.points = new Vector2[]
             { 
                 _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(0, 0, 0)), 
                 _wallTilemap.layoutGrid.GetCellCenterWorld(new Vector3Int(Size.x, 0, 0)), 
@@ -196,7 +202,7 @@ namespace Project
                 
                 if (random <= accumulatedChance)
                 {
-                    return _config.Content[i].ID;
+                    return _config.Content[i].ContentId;
                 }
             }
             
@@ -215,7 +221,36 @@ namespace Project
 
         public void Clear()
         {
+            _isClear = true;
             
+            Destroy(_wall.gameObject);
+            ClearFloorAndWalls();
+            
+            ClearContent();
+            
+            ClearSpawns();
+        }
+
+        private void ClearFloorAndWalls()
+        {
+            _floorTilemap.ClearAllTiles();
+            _wallTilemap.ClearAllTiles();
+        }
+
+        private void ClearContent()
+        {
+            foreach (var contentFactory in _contentFactories)
+            { 
+                contentFactory.Value.ClearAll();
+            }
+        }
+
+        private void ClearSpawns()
+        {
+            foreach (var spawnPoint in _spawnPoints)
+            {
+                Destroy(spawnPoint.gameObject);
+            }
         }
 
 #if UNITY_EDITOR

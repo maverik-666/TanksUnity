@@ -13,9 +13,6 @@ namespace Project
             var ownerPlayerRegistry = new OwnerPlayerRegistry();
             Bind(ownerPlayerRegistry);
                 
-            var spawnPointRegistry = new Registry<SpawnPoint>(20);
-            Bind(spawnPointRegistry);
-            
             var camera = GetComponentInChildren<Camera>(true);
             var cameraFollowHandler = GetComponentInChildren<CameraFollower>(true);
             cameraFollowHandler.Init(camera, ownerPlayerRegistry);
@@ -66,7 +63,7 @@ namespace Project
             var player = GetComponentInChildren<LocalPlayer>();
 
             tankFactory.Init();
-            player.Init(tankFactory.Create(spawnPointRegistry.Items[0].Position));
+            player.Init(tankFactory.Create(player,presetMap.SpawnPoints[0].Position));
             ownerPlayerRegistry.Set(player);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);

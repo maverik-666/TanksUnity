@@ -24,6 +24,15 @@ namespace Project
             var damageableRegistry = new IndexedRegistry<IDamageable>(500);
             Bind(damageableRegistry);
             
+            var interactableRegistry = new IndexedRegistry<IInteractable>(500);
+            Bind(interactableRegistry);
+
+            var playerRegistry = new PlayerRegistry(8);
+            Bind(playerRegistry);
+
+            var activeMapRegistry = new ActiveMapRegistry();
+            Bind(activeMapRegistry);
+            
             var camera = GetComponentInChildren<Camera>(true);
             var cameraFollowHandler = GetComponentInChildren<CameraFollower>(true);
             cameraFollowHandler.Init(camera, ownerPlayerRegistry);
@@ -70,11 +79,7 @@ namespace Project
             GetComponentInChildren<TankMovementUseCase>(true).Init();
             GetComponentInChildren<TankShootUseCase>(true).Init(projectileFactory);
 
-            var mapGenerator = GetComponentInChildren<BattleMapGenerator>(true);
             var destructibleRegistrator = GetComponentInChildren<DestructibleRegistrator>(true);
-
-            var presetMap = GetComponentInChildren<PresetMap>(true);
-            presetMap.Init();
             
             var boxFactory = GetComponentInChildren<BoxFactory>(true);
             var gasolineFactory = GetComponentInChildren<GasolineFactory>(true);
@@ -85,13 +90,30 @@ namespace Project
             boxFactory.Init(destructibleRegistrator);
             gasolineFactory.Init(destructibleRegistrator);
             bushFactory.Init();
-            
+
+            var mapConfigProvider = GetComponentInChildren<BattleMapConfigProvider>(true);
+            var mapGenerator = GetComponentInChildren<BattleMapGenerator>(true);
+
             mapGenerator.Init(boxFactory, gasolineFactory, bushFactory);
-            mapGenerator.Generate(0);
+            mapConfigProvider.Init(playerRegistry);
+            
+            var presetMap = GetComponentInChildren<PresetMap>(true);
+            presetMap.Init();
+            activeMapRegistry.Set(presetMap);
+            
+            var battleCreator = GetComponentInChildren<BattleCreator>(true);
+            battleCreator.Init(cameraBoundsUpdateHandler, playerRegistry, presetMap, destructibleRegistrator, mapGenerator, mapConfigProvider);
             
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
-            
-            _ = SessionConnector.Instance.FulfillRequest();
+
+            if (SessionConnector.Instance == null)
+            {
+                SessionConnector.HostInstant();
+            }
+            else
+            {
+                _ = SessionConnector.Instance.FulfillRequest();
+            }
         }
     }
 }

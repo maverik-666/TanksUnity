@@ -6,7 +6,7 @@ namespace Project
     public interface IMap
     { 
         public Bounds Bounds { get; }
-        
-        public SpawnPoint GetSpawnPoint();
+
+        public IReadOnlyList<SpawnPoint> SpawnPoints { get; }
     }
 }
