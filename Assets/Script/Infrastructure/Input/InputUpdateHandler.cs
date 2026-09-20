@@ -37,7 +37,12 @@ namespace Project
         
         public void UpdateTick(float deltaTime)
         {
-            _mouseScreenPosition = _positionActionReference.action.ReadValue<Vector2>();
+            var mouseScreenPosition = _positionActionReference.action.ReadValue<Vector2>();
+            if (!float.IsNaN(mouseScreenPosition.x))
+            {
+                _mouseScreenPosition = mouseScreenPosition;
+            }
+            
             _moveInput = _moveActionReference.action.ReadValue<Vector2>();
         }
 

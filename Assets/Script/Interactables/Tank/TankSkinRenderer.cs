@@ -96,6 +96,11 @@ namespace Project
             _trackTrailMain.startRotation = transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         }
 
+        public void Teleport()
+        {
+            _trackTrailParticles.Clear();
+        }
+
 #if UNITY_EDITOR
         private void Start()
         {

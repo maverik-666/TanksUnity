@@ -33,6 +33,8 @@ namespace Project
         public Rigidbody2D Rigidbody2D => _rigidbody2D;
         public Vector2 Position => transform.position;
         public Quaternion Rotation => transform.rotation;
+        public Vector2 LinearVelocity => _rigidbody2D.linearVelocity;
+        public float AngularVelocity => _rigidbody2D.angularVelocity;
         
         public TankStats TankStats => _tankStats;
         public Turret Turret => _turret;
@@ -81,6 +83,11 @@ namespace Project
             _tankMovementUseCase.Execute(this, input, deltaTime);
             _tankSkinRenderer.UpdatePosition();
         }
+
+        public void UpdatePosition()
+        {
+            _tankSkinRenderer.UpdatePosition();
+        }
         
         public void ApplyRecoil(Vector2 force)
         {
@@ -124,6 +131,11 @@ namespace Project
 
             _tankSkinRenderer.Brighten();
             _tankSkinRenderer.Flash(_invincibilityDuration);
+        }
+
+        public void Teleport()
+        {
+            _tankSkinRenderer.Teleport();
         }
         
 #if UNITY_EDITOR

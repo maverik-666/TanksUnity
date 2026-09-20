@@ -48,10 +48,10 @@ namespace Project
             _cameraBounds.SetBounds(_battleMapGenerator.Bounds);
 
             StartBattleRpc(config);
-            
-            for (int i = 0; i < _battleMapGenerator.SpawnPoints.Count; i++)
+
+            for (int i = 0; i < _playerRegistry.Count; i++)
             {
-                var spawnPoint = _battleMapGenerator.SpawnPoints[i];
+                var spawnPoint = _battleMapGenerator.SpawnPoints[i % _battleMapGenerator.SpawnPoints.Count];
                 _playerRegistry.Items[i].Teleport(spawnPoint.Position);
             }
         }
@@ -79,12 +79,12 @@ namespace Project
         public void EndBattle()
         {
             _cameraBounds.SetBounds(_lobbyMap.Bounds);
-            
+
             EndBattleRpc();
-            
-            for (int i = 0; i < _lobbyMap.SpawnPoints.Count; i++)
+
+            for (int i = 0; i < _playerRegistry.Count; i++)
             {
-                var spawnPoint = _lobbyMap.SpawnPoints[i];
+                var spawnPoint = _lobbyMap.SpawnPoints[i % _lobbyMap.SpawnPoints.Count];
                 _playerRegistry.Items[i].Teleport(spawnPoint.Position);
             }
         }

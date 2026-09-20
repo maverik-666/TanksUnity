@@ -1,40 +1,42 @@
 namespace Project
 {
-    using System.Collections.Generic;
     using Unity.Netcode;
     using UnityEngine;
     using Random = UnityEngine.Random;
 
     public class NetworkPlayer : NetworkBehaviour, IPlayer
     {
-        private const float InterpolationDelay = 0.1f;
-
-        private struct Snapshot
-        {
-            public Vector2 Position;
-            public float TankRotation;
-            public float Timestamp;
-        }
-
         private Context _context = null;
         private Tank _tank = null;
         private OwnerPlayerRegistry _ownerRegistry = null;
         private PlayerPermissions _permissions = PlayerPermissions.Restricted;
-        
+
         private IndexedRegistry<IInteractable> _interactableRegistry = null;
         private AllTankRegistry _allTankRegistry = null;
         private PlayerRegistry _playerRegistry = null;
+        private TankFactory _tankFactory = null;
 
-        private readonly NetworkVariable<Vector2> _tankPosition = new NetworkVariable<Vector2>();
-        private readonly NetworkVariable<float> _tankRotation = new NetworkVariable<float>();
-        private readonly NetworkVariable<float> _turretRotation = new NetworkVariable<float>();
-
-        private readonly Queue<Snapshot> _snapshots = new Queue<Snapshot>();
-
-        public Vector2 TankPosition => _tank.Position;
+        private Interpolator _interpolator = null;
+        private NetworkVariable<Vector2> _tankPosition = new NetworkVariable<Vector2>();
+        private bool _isInitialized = false;
         
+        public Vector2 TankPosition => _tank.Position;
+
         public PlayerPermissions Permissions => _permissions;
 
+        public PlayerState GetCurrentState()
+        {
+            return new PlayerState()
+            {
+                Position = _tank.Position,
+                TankRotation = _tank.Rotation.eulerAngles.z,
+                TurretRotation = _tank.Turret.Rotation.eulerAngles.z,
+                Velocity = _tank.LinearVelocity,
+                TankAngularVelocity = _tank.AngularVelocity,
+                Tick = NetworkManager.NetworkTickSystem.LocalTime.Tick
+            };
+        }
+        
         public override void OnNetworkSpawn()
         {
             _context = NetworkCompositionRoot.Instance;
@@ -54,44 +56,32 @@ namespace Project
                 _tank = tankFactory.Create(this, position);
                 _tankPosition.Value = position;
                 
-                if (IsOwner)
+                if (IsHost)
                 {
-                    RegisterAsOwner();
-
-                    if (IsHost)
-                    {
-                        _permissions = PlayerPermissions.All;
-                    }
+                    _permissions = PlayerPermissions.All;
                 }
             }
             else
             {
                 _tank = tankFactory.Create(this, _tankPosition.Value);
-
-                if (IsOwner)
-                {
-                    RegisterAsOwner();
-                }
-                else
-                {
-                    _tankPosition.OnValueChanged += OnSnapshotReceived;
-                }
+            }
+            
+            if (IsOwner)
+            {
+                RegisterAsOwner();
+            }
+            else
+            {
+                _tank.Rigidbody2D.bodyType = RigidbodyType2D.Kinematic;
+                _interpolator = new Interpolator(this, GetCurrentState());
+                _isInitialized = true;
             }
             
             _interactableRegistry.Add(id, _tank); 
             _allTankRegistry.Add(id, _tank);
             _playerRegistry.Add(this);
         }
-
-        private void OnSnapshotReceived(Vector2 prev, Vector2 next)
-        {
-            _snapshots.Enqueue(new Snapshot
-            {
-                Position = next,
-                TankRotation = _tankRotation.Value,
-                Timestamp = Time.time
-            });
-        }
+        
         
         private void RegisterAsOwner()
         {
@@ -99,7 +89,36 @@ namespace Project
             _ownerRegistry.Set(this);
             _context.Resolve<CameraFollower>().Teleport();
             _context.Resolve<PlayerHealthBar>().SetTarget(_tank.Health);
-        } 
+
+            NetworkManager.NetworkTickSystem.Tick += OnClientTick;
+        }
+
+        private void OnClientTick()
+        {
+            SendStateToServerRpc(GetCurrentState());
+        }
+
+        [Rpc(SendTo.Server)]
+        private void SendStateToServerRpc(PlayerState playerState)
+        {
+            _tankPosition.Value = playerState.Position;
+
+            if (IsHost && !IsOwner)
+            {
+                _interpolator.AddState(playerState);
+            }
+
+            SendStateToClientsRpc(playerState);
+        }
+
+        [Rpc(SendTo.ClientsAndHost)]
+        private void SendStateToClientsRpc(PlayerState playerState)
+        {
+            if (!IsOwner)
+            {
+                _interpolator.AddState(playerState);
+            }
+        }
 
         public void Shoot()
         {
@@ -131,20 +150,6 @@ namespace Project
                 return;
 
             _tank.Move(input, deltaTime);
-            MoveRpc(_tank.Position, _tank.Rotation.eulerAngles.z);
-        }
-
-        [Rpc(SendTo.Server)]
-        private void MoveRpc(Vector2 position, float rotation)
-        {
-            if (!IsOwner)
-            {
-                _tank.transform.position = position;
-                _tank.transform.rotation = Quaternion.Euler(0, 0, rotation);
-            }
-
-            _tankPosition.Value = position;
-            _tankRotation.Value = rotation;
         }
 
         public void Rotate(Vector2 targetPos, float deltaTime)
@@ -153,28 +158,29 @@ namespace Project
                 return;
 
             _tank.Rotate(targetPos, deltaTime);
-            RotateRpc(targetPos, deltaTime);
-        }
-        
-        [Rpc(SendTo.Server)]
-        private void RotateRpc(Vector2 targetPos, float deltaTime)
-        {
-            if (!IsOwner)
-            {
-                _tank.Rotate(targetPos, deltaTime);
-            }
-
-            _turretRotation.Value = _tank.Turret.Rotation.eulerAngles.z;
         }
         
         public void Teleport(Vector2 targetPosition)
         {
-            _snapshots.Clear();
             _tank.gameObject.SetActive(false);
-            _tankPosition.Value = targetPosition;
             _tank.transform.position = targetPosition;
+            
+            if (_isInitialized)
+            {
+                _interpolator.SetState(new PlayerState
+                {
+                    Position = targetPosition,
+                    TankRotation = 0,
+                    TurretRotation = 0,
+                    Velocity = Vector2.zero,
+                    TankAngularVelocity = 0,
+                    Tick = NetworkManager.NetworkTickSystem.LocalTime.Tick,
+                });
+            }
+            
+            _tank.Teleport();
             _tank.gameObject.SetActive(true);
-        
+            
             TeleportRpc(targetPosition);
         }
         
@@ -183,6 +189,21 @@ namespace Project
         {
             _tank.gameObject.SetActive(false);
             _tank.transform.position = targetPosition;
+            
+            if (_isInitialized)
+            {
+                _interpolator.SetState(new PlayerState
+                {
+                    Position = targetPosition,
+                    TankRotation = 0,
+                    TurretRotation = 0,
+                    Velocity = Vector2.zero,
+                    TankAngularVelocity = 0,
+                    Tick = NetworkManager.NetworkTickSystem.LocalTime.Tick,
+                });
+            }
+            
+            _tank.Teleport();
             _tank.gameObject.SetActive(true);
         }
 
@@ -193,56 +214,29 @@ namespace Project
 
         private void Update()
         {
-            if (!IsClient || IsOwner)
+            if ((IsHost || IsClient) && !IsOwner && _isInitialized)
             {
-                return;
+                _interpolator.Update();
             }
-
-            InterpolatePosition();
-            InterpolateTurret();
         }
 
-        private void InterpolatePosition()
+        public void SetState(Vector3 position, float tankRotation, float turretRotation)
         {
-            float renderTime = Time.time - InterpolationDelay;
-
-            while (_snapshots.Count > 2 && _snapshots.Peek().Timestamp < renderTime)
-            {
-                _snapshots.Dequeue();
-            }
-
-            var buffer = _snapshots.ToArray();
-            if (buffer.Length < 2)
-            {
-                return;
-            }
-
-            float t = Mathf.InverseLerp(buffer[0].Timestamp, buffer[1].Timestamp, renderTime);
-            _tank.transform.position = Vector2.Lerp(buffer[0].Position, buffer[1].Position, t);
-            _tank.transform.rotation = Quaternion.Lerp(
-                Quaternion.Euler(0, 0, buffer[0].TankRotation),
-                Quaternion.Euler(0, 0, buffer[1].TankRotation),
-                t);
+            _tank.transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, tankRotation));
+            _tank.UpdatePosition();
+            _tank.Turret.transform.rotation = Quaternion.Euler(0, 0, turretRotation);
         }
-
-        private void InterpolateTurret()
-        {
-            _tank.Turret.transform.rotation = Quaternion.Lerp(
-                _tank.Turret.Rotation,
-                Quaternion.Euler(0, 0, _turretRotation.Value),
-                Time.deltaTime * 20f);
-        }
-
+        
         public override void OnNetworkDespawn()
         {
-            if (!IsOwner)
-            {
-                _tankPosition.OnValueChanged -= OnSnapshotReceived;
-            }
-
             if (IsOwner)
             {
                 _ownerRegistry.Unset(this);
+            }
+            
+            if (IsClient && IsOwner)
+            {
+                NetworkManager.NetworkTickSystem.Tick -= OnClientTick;
             }
             
             _interactableRegistry.Remove(_tank);
@@ -251,7 +245,6 @@ namespace Project
 
             Destroy(_tank.gameObject);
 
-            base.OnNetworkDespawn();
         }
     }
 }
