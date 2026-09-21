@@ -1,6 +1,7 @@
 namespace Project
 {
     using System;
+    using System.Collections.Generic;
     using Unity.Netcode;
     using UnityEngine;
 
@@ -17,6 +18,8 @@ namespace Project
         private PlayBattleButton _playBattleButton = null;
         private bool _isInitialized = false;
 
+        private List<Health> _alivePLayers = new List<Health>();
+        
         public void Init(
             CameraBoundsUpdateHandler cameraBounds,
             PlayerRegistry playerRegistry,
@@ -53,6 +56,8 @@ namespace Project
             {
                 var spawnPoint = _battleMapGenerator.SpawnPoints[i % _battleMapGenerator.SpawnPoints.Count];
                 _playerRegistry.Items[i].Teleport(spawnPoint.Position);
+                _playerRegistry.Items[i].SetInvincibility(false);
+                _alivePLayers.Add(_playerRegistry.Items[i].Health);
             }
         }
 
@@ -65,18 +70,32 @@ namespace Project
             for (int i = 0; i < _playerRegistry.Count; i++)
             {
                 _playerRegistry.Items[i].Revive();
+                _playerRegistry.Items[i].SetInvincibility(false);
             }
         }
 
-        private void OnGUI()
+        public void OnDamageTakenBy(IDamageable damageable)
         {
-            if (GUI.Button(new Rect(10, 10, 100, 100), "Leave"))
+            if (_alivePLayers.Contains(damageable.Health))
+            {
+                if (damageable.IsDead)
+                {
+                    OnPlayerDeath(damageable.Health);
+                }
+            }
+        }
+
+        private void OnPlayerDeath(Health health)
+        {
+            _alivePLayers.Remove(health);
+
+            if (_alivePLayers.Count <= 1)
             {
                 EndBattle();
             }
         }
 
-        public void EndBattle()
+        private void EndBattle()
         {
             _cameraBounds.SetBounds(_lobbyMap.Bounds);
 
@@ -86,6 +105,9 @@ namespace Project
             {
                 var spawnPoint = _lobbyMap.SpawnPoints[i % _lobbyMap.SpawnPoints.Count];
                 _playerRegistry.Items[i].Teleport(spawnPoint.Position);
+                _playerRegistry.Items[i].SetInvincibility(true);
+                _playerRegistry.Items[i].Revive();
+                
             }
         }
         
@@ -93,6 +115,12 @@ namespace Project
         private void EndBattleRpc()
         {
             _cameraBounds.SetBounds(_lobbyMap.Bounds);
+            
+            for (int i = 0; i < _playerRegistry.Count; i++)
+            {
+                _playerRegistry.Items[i].SetInvincibility(true);
+                _playerRegistry.Items[i].Revive();
+            }
         }
 
 #if UNITY_EDITOR

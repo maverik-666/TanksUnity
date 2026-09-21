@@ -22,7 +22,14 @@ namespace Project
         
         public Vector2 TankPosition => _tank.Position;
 
+        public void SetInvincibility(bool isInvincible)
+        {
+            _tank.SetInvincibility(isInvincible);
+        }
+
         public PlayerPermissions Permissions => _permissions;
+        
+        public Health Health => _tank.Health;
 
         public PlayerState GetCurrentState()
         {
@@ -76,7 +83,8 @@ namespace Project
                 _interpolator = new Interpolator(this, GetCurrentState());
                 _isInitialized = true;
             }
-            
+
+            _tank.SetInvincibility(true);
             _interactableRegistry.Add(id, _tank); 
             _allTankRegistry.Add(id, _tank);
             _playerRegistry.Add(this);

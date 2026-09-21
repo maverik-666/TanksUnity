@@ -6,6 +6,8 @@ namespace Project
     {
         Vector2 TankPosition { get; }
         
+        public Health Health { get; }
+        
         void Shoot();
         
         void Move(Vector2 input, float deltaTime);
@@ -16,6 +18,8 @@ namespace Project
 
         void Revive();
 
+        public void SetInvincibility(bool isInvincible);
+        
         public PlayerPermissions Permissions { get; }
     }
 }

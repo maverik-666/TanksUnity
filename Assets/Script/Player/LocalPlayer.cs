@@ -13,11 +13,18 @@ namespace Project
         
         public PlayerPermissions Permissions => PlayerPermissions.All;
         
+        public Health Health => _tank.Health;
+        
         public void Init(Tank tank)
         {
             _tank = tank;
             
             _isInitialized = true;
+        }
+        
+        public void SetInvincibility(bool isInvincible)
+        {
+            _tank.SetInvincibility(isInvincible);
         }
         
         public void Shoot()

@@ -1,5 +1,6 @@
 namespace Project
 {
+    using System;
     using UnityEngine;
     
     public class NetworkCompositionRoot : Context
@@ -11,6 +12,8 @@ namespace Project
         public void Awake()
         {
             _instance = this;
+            
+            Debug.LogError("Force the build console open...");
             
             var updateHandlerRegistry = new Registry<IUpdateHandler>(20);
             Bind(updateHandlerRegistry);
@@ -54,7 +57,6 @@ namespace Project
             timerUpdateHandler.Init();
             updateHandlerRegistry.Add(timerUpdateHandler);
             
-            GetComponentInChildren<DamageUseCase>(true).Init();
             
             var vfxFactory = GetComponentInChildren<OneShotVFXFactory>(true);
             vfxFactory.Init();
@@ -99,6 +101,8 @@ namespace Project
             var battleCreator = GetComponentInChildren<BattleCreator>(true);
             battleCreator.Init(cameraBoundsUpdateHandler, playerRegistry, presetMap, interactableRegistrator, mapGenerator, mapConfigProvider);
             
+            GetComponentInChildren<BattleDamageUseCase>(true).Init(battleCreator);
+            
             GetComponentInChildren<GameUpdater>(true).Init(updateHandlerRegistry);
 
             if (SessionConnector.Instance == null)
@@ -107,7 +111,14 @@ namespace Project
             }
             else
             {
-                _ = SessionConnector.Instance.FulfillRequest();
+                try
+                { 
+                    SessionConnector.Instance.FulfillRequest();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                }
             }
         }
     }

@@ -70,18 +70,25 @@ namespace Project
             }
         }
 
-        public async Task FulfillRequest()
+        public async void FulfillRequest()
         {
-            if (_pendingRequest == RequestType.Host)
+            try
             {
-                await _multiplayerService.CreateSessionAsync(_sessionOptions);
-            }
-            else if (_pendingRequest == RequestType.Client)
-            {
-                await _multiplayerService.JoinSessionByIdAsync(_clientSessionId);
-            }
+                if (_pendingRequest == RequestType.Host)
+                {
+                    await _multiplayerService.CreateSessionAsync(_sessionOptions);
+                }
+                else if (_pendingRequest == RequestType.Client)
+                {
+                    await _multiplayerService.JoinSessionByIdAsync(_clientSessionId);
+                }
             
-            _pendingRequest = RequestType.None;
+                _pendingRequest = RequestType.None;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
         
         public static async void HostInstant()

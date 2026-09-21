@@ -155,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.ExplodeDestructibleStrategy
   _damage: 100
   _power: 50
-  _radius: 1
+  _radius: 1.5
 --- !u!114 &7134513279947545401
 MonoBehaviour:
   m_ObjectHideFlags: 0

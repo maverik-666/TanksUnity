@@ -27,7 +27,8 @@ namespace Project
         private Turret _turret = null;
         private Rigidbody2D _rigidbody2D = null;
         private IPlayer _player = null;
-        
+
+        private bool _isInvincible = false;
         private bool _isInitialized = false;
 
         public Rigidbody2D Rigidbody2D => _rigidbody2D;
@@ -47,7 +48,7 @@ namespace Project
         
         public bool IsDead => _health.IsDead;
 
-        public bool CanNotTakeDamage => _invincibilityTimer.IsRunning;
+        public bool CanNotTakeDamage => _invincibilityTimer.IsRunning || _isInvincible;
 
         public void Init(IPlayer player, TankStats tankStats)
         {
@@ -76,6 +77,11 @@ namespace Project
             }
             
             _isInitialized = true;
+        }
+
+        public void SetInvincibility(bool isInvincible)
+        {
+            _isInvincible = isInvincible;
         }
         
         public void Move(Vector2 input, float deltaTime)
@@ -129,6 +135,7 @@ namespace Project
         {
             _health.SetHealth(_health.Max);
 
+            _rigidbody2D.mass = 200f;
             _tankSkinRenderer.Brighten();
             _tankSkinRenderer.Flash(_invincibilityDuration);
         }
